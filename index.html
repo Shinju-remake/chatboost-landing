@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-wf-domain="chatboost-1e983b.webflow.io" data-wf-page="69f542c93da0ffb64c46e22b" data-wf-site="69f542c83da0ffb64c46e220" class="w-mod-js">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -8,6 +8,16 @@
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      /* Force visibility of sections that might be hidden by Webflow animations */
+      .section, .header, .container, [data-w-id] {
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+      /* Ensure tabs work without Webflow JS if needed */
+      .w-tab-pane { display: none; }
+      .w--tab-active { display: block !important; }
+    </style>
   </head>
   <body>
     <div id="root"></div>
