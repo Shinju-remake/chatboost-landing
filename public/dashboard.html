@@ -538,8 +538,14 @@
 
         async function fetchStats() {
             try {
+                console.log("Fetching stats with API_KEY:", API_KEY);
                 const res = await fetch(`${API_BASE}/admin/stats`, { headers: {"X-API-Key": API_KEY} });
-                if (!res.ok) return;
+                console.log("Stats response status:", res.status);
+                if (!res.ok) {
+                    const err = await res.text();
+                    console.error("Stats fetch failed:", err);
+                    return;
+                }
                 const s = await res.json();
                 
                 CURRENT_PLAN = (s.plan || "free").toLowerCase();
