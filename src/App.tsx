@@ -72,6 +72,7 @@ function App() {
   };
 
   const [modalContent, setModalContent] = useState('');
+  const [dashboardUrl, setDashboardUrl] = useState('');
 
   const handleLinkClick = (e: React.MouseEvent, content: string) => {
     const href = (e.currentTarget as HTMLAnchorElement).getAttribute('href');
@@ -118,12 +119,13 @@ function App() {
     const businessName = formData.get('business_name') as string;
     const userEmail = formData.get('user_email') as string;
     const userName = formData.get('user_name') as string;
+    const plan = formData.get('plan') as string;
 
     const signupData = {
         name: businessName,
         subdomain: businessName.toLowerCase().replace(/[^a-z0-9]/g, ''),
         email: userEmail,
-        plan: "free"
+        plan: plan
     };
 
     setOnboardingStep(1);
@@ -131,6 +133,8 @@ function App() {
     // Simulate AI Onboarding
     setTimeout(() => setOnboardingStep(2), 1500);
     setTimeout(() => setOnboardingStep(3), 3000);
+
+    let dbUrl = '';
 
     // Actual Backend Registration & Email Dispatch
     try {
@@ -142,6 +146,8 @@ function App() {
 
         if (!response.ok) throw new Error('Signup failed');
         
+        const data = await response.json();
+        dbUrl = data.dashboard_url;
         console.log('INTEGRATION_SUCCESS: Lead registered and email dispatched via backend.');
     } catch {
         console.warn('INTEGRATION_NOTICE: Backend registration failed. Ensure the FastAPI server is running on port 8000.');
@@ -150,6 +156,7 @@ function App() {
     setTimeout(() => {
         setIsModalOpen(false);
         setOnboardingStep(0);
+        if (dbUrl) setDashboardUrl(dbUrl);
         setModalContent(`Welcome ${userName}! Your AI dashboard for ${businessName} is being provisioned. Check your email (${userEmail}) for the confirmation.`);
         setIsModalOpen(true);
     }, 4500);
@@ -2273,6 +2280,11 @@ function App() {
                         <option>Retail</option>
                         <option>Other</option>
                     </select>
+                    <select className="modal_input" name="plan" style={{ cursor: 'pointer' }}>
+                        <option value="free">Free Trial (14 days)</option>
+                        <option value="starter">Starter Plan ($49/mo)</option>
+                        <option value="pro">Professional Plan ($199/mo)</option>
+                    </select>
                     <button className="button on-accent-primary" type="submit" style={{ border: 'none', padding: '16px', borderRadius: '12px', cursor: 'pointer', marginTop: '10px' }}>Create My Bot</button>
                     <button className="button is-secondary" type="button" onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666', fontSize: '13px' }}>Cancel</button>
                     </form>
@@ -2325,7 +2337,7 @@ function App() {
           >
             <h3 className="heading_primary_modal" style={{ color: "#1a1a1a", marginBottom: "16px" }}>Success!</h3>
             <p className="paragraph_small" style={{ color: "#666", marginBottom: "32px", lineHeight: '1.5' }}>{modalContent}</p>
-            <button className="button on-accent-primary" onClick={() => setIsModalOpen(false)} style={{ border: 'none', padding: '16px 32px', borderRadius: '12px', cursor: 'pointer', width: '100%', fontSize: '15px' }}>Awesome</button>
+            <button className="button on-accent-primary" onClick={() => dashboardUrl ? window.location.href = dashboardUrl : setIsModalOpen(false)} style={{ border: 'none', padding: '16px 32px', borderRadius: '12px', cursor: 'pointer', width: '100%', fontSize: '15px' }}>{dashboardUrl ? "Go to Dashboard" : "Awesome"}</button>
           </div>
         </div>
       )}
