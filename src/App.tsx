@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import emailjs from '@emailjs/browser';
 // eslint-disable-line no-unused-vars
 
 function App() {
@@ -112,15 +113,56 @@ function App() {
 
   const [onboardingStep, setOnboardingStep] = useState(0);
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = {
+        user_name: formData.get('user_name'),
+        user_email: formData.get('user_email'),
+        business_name: formData.get('business_name'),
+        niche: formData.get('niche'),
+    };
+
     setOnboardingStep(1);
+    
+    // Simulate AI Onboarding
     setTimeout(() => setOnboardingStep(2), 1500);
     setTimeout(() => setOnboardingStep(3), 3000);
+
+    // Actual Email & Webhook Integration
+    try {
+        // 1. Webhook to Agency CRM / Make.com
+        fetch('https://hook.make.com/placeholder_url_for_pro_tier', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...data, type: 'CONTACT_FORM_SUBMISSION', source: 'CHATBOOST_LANDING_PAGE' })
+        }).catch(() => {});
+
+        // 2. EmailJS - Admin Notification
+        await emailjs.send(
+            'service_shinju_ai', 
+            'template_admin_notice', 
+            data,
+            'user_public_key'
+        );
+
+        // 3. EmailJS - User Demo Confirmation
+        await emailjs.send(
+            'service_shinju_ai', 
+            'template_user_demo', 
+            data,
+            'user_public_key'
+        );
+        
+        console.log('INTEGRATION_SUCCESS: Lead captured and emails dispatched.');
+    } catch (error) {
+        console.warn('INTEGRATION_NOTICE: Emails will be sent once real API keys are provided in App.tsx.');
+    }
+
     setTimeout(() => {
         setIsModalOpen(false);
         setOnboardingStep(0);
-        setModalContent('Welcome to ChatBoost by Shinju AI! Your AI dashboard is being provisioned. We have sent your credentials to your email.');
+        setModalContent(`Welcome ${data.user_name}! Your AI dashboard for ${data.business_name} is being provisioned. Check your email for the scheduled demo invitation.`);
         setIsModalOpen(true);
     }, 4500);
   };
@@ -2234,9 +2276,10 @@ function App() {
                     <h2 className="heading_primary_modal" style={{ color: '#1a1a1a', marginBottom: '16px' }}>Get Started</h2>
                     <p className="paragraph_small" style={{ color: '#666', marginBottom: '24px' }}>Tell us about your business to begin your 14-day free trial.</p>
                     <form onSubmit={handleFormSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <input className="modal_input" placeholder="Business Name" required />
-                    <input className="modal_input" type="email" placeholder="Work Email" required />
-                    <select className="modal_input" style={{ cursor: 'pointer' }}>
+                    <input className="modal_input" placeholder="Full Name" required name="user_name" />
+                    <input className="modal_input" placeholder="Business Name" required name="business_name" />
+                    <input className="modal_input" type="email" placeholder="Work Email" required name="user_email" />
+                    <select className="modal_input" name="niche" style={{ cursor: 'pointer' }}>
                         <option>Restaurant</option>
                         <option>Salon / Spa</option>
                         <option>Retail</option>
