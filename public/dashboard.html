@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatboost | Omni-Console V3</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --primary: #BB00FF; 
+            --primary-glow: rgba(187, 0, 255, 0.4);
+            --dark-bg: #050505; 
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --accent-green: #00ff88;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: 'Geist', 'Inter', sans-serif; 
+            background: var(--dark-bg); 
+            color: var(--text-main); 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            letter-spacing: -0.01em;
+        }
+
+        /* BACKGROUND DECORATION */
+        .bg-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 10% 10%, rgba(187, 0, 255, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(187, 0, 255, 0.03) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        #sidebar { 
+            width: 280px; 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: white; 
+            height: 100vh; 
+            padding: 32px; 
+            position: fixed; 
+            z-index: 1000; 
+            border-right: 1px solid var(--glass-border);
+        }
+        
+        #sidebar h2 { 
+            color: var(--primary); 
+            font-size: 1.5rem; 
+            margin-bottom: 8px; 
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            text-shadow: 0 0 20px var(--primary-glow);
+        }
+        
+        #sidebar hr { border: 0; border-top: 1px solid var(--glass-border); margin: 24px 0; }
+        
+        .nav-item { 
+            padding: 12px 16px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            margin-bottom: 8px; 
+            color: var(--text-muted); 
+            font-weight: 500; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            font-size: 0.9375rem;
+        }
+        
+        .nav-item:hover { 
+            background: rgba(255, 255, 255, 0.05); 
+            color: white; 
+            transform: translateX(4px);
+        }
+        
+        .nav-item.active { 
+            background: rgba(187, 0, 255, 0.1); 
+            color: var(--primary); 
+            border: 1px solid rgba(187, 0, 255, 0.2);
+        }
+
+        #mobile-nav { 
+            display: none; 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 72px; 
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border); 
+            z-index: 2000; 
+            justify-content: space-around; 
+            align-items: center; 
+        }
+        
+        .m-nav-item { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            color: var(--text-muted); 
+            font-size: 0.65rem; 
+            text-decoration: none; 
+            cursor: pointer; 
+            flex: 1;
+        }
+        .m-nav-item.active { color: var(--primary); }
+        .m-nav-item span { font-size: 1.4rem; margin-bottom: 4px; }
+
+        #content { 
+            flex: 1; 
+            margin-left: 280px; 
+            padding: 48px; 
+            overflow-y: auto; 
+            height: 100vh; 
+            scrollbar-width: thin;
+            scrollbar-color: var(--glass-border) transparent;
+        }
+        
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 40px; 
+            gap: 20px; 
+        }
+        
+        .card { 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 24px; 
+            border-radius: 20px; 
+            border: 1px solid var(--glass-border);
+            margin-bottom: 32px; 
+            box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card h2 { 
+            font-size: 1.1rem; 
+            margin-bottom: 20px; 
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 24px; 
+            margin-bottom: 40px; 
+        }
+        
+        .stat-card { 
+            padding: 24px; 
+            position: relative;
+            overflow: hidden;
+            border-left: none;
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover { transform: translateY(-4px); }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+        .stat-card h3 { font-size: 2rem; font-weight: 800; margin-top: 8px; letter-spacing: -0.02em; }
+        .stat-card p { color: var(--text-muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        /* TERMINAL COMPONENT */
+        .terminal-card {
+            background: #000;
+            border: 1px solid #1a1a1a;
+            padding: 0;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+        .terminal-header {
+            background: #111;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        .terminal-body {
+            height: 300px;
+            overflow-y: auto;
+            padding: 16px;
+            font-family: 'Geist Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-green);
+            background: #050505;
+        }
+        .terminal-line { margin-bottom: 4px; display: flex; gap: 12px; }
+        .terminal-timestamp { color: #555; min-width: 80px; }
+        .terminal-msg { color: #eee; }
+        .terminal-status { color: var(--primary); }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th { 
+            padding: 14px; 
+            text-align: left; 
+            color: var(--text-muted); 
+            font-weight: 600; 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--glass-border); 
+        }
+        td { padding: 16px 14px; text-align: left; border-bottom: 1px solid var(--glass-border); color: #eee; }
+        tr:hover td { background: rgba(255, 255, 255, 0.01); }
+
+        .tag { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+
+        .btn { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            font-size: 0.9rem;
+            box-shadow: 0 0 15px rgba(187, 0, 255, 0.2);
+        }
+        .btn:hover { 
+            background: #cc33ff;
+            transform: translateY(-2px); 
+            box-shadow: 0 0 25px rgba(187, 0, 255, 0.4);
+        }
+        .btn-outline { 
+            background: transparent; 
+            border: 1px solid var(--glass-border); 
+            color: white; 
+        }
+        .btn-outline:hover {
+            border-color: var(--primary);
+            background: rgba(187, 0, 255, 0.05);
+        }
+        
+        .tab-content { display: none; animation: fadeIn 0.4s ease-out; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        input, textarea, select { 
+            width: 100%; 
+            padding: 14px; 
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border); 
+            border-radius: 12px; 
+            font-size: 0.9375rem; 
+            margin-bottom: 20px; 
+            color: white;
+            transition: border-color 0.3s;
+        }
+        input:focus, textarea:focus { border-color: var(--primary); outline: none; background: rgba(255, 255, 255, 0.05); }
+
+        @media (max-width: 1024px) {
+            #sidebar { display: none; }
+            #mobile-nav { display: flex; }
+            #content { margin-left: 0; padding: 24px; padding-bottom: 100px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+            .header { flex-direction: column; align-items: flex-start; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    
+    <div id="mobile-nav">
+        <div class="m-nav-item active" onclick="switchTab('analytics')"><span>📊</span>Data</div>
+        <div class="m-nav-item" onclick="switchTab('reservations')"><span>📅</span>Orders</div>
+        <div class="m-nav-item" onclick="switchTab('rules')"><span>🛠️</span>Rules</div>
+        <div class="m-nav-item" onclick="switchTab('knowledge')"><span>🧠</span>Brain</div>
+        <div class="m-nav-item" onclick="switchTab('settings')"><span>⚙️</span>Pro</div>
+    </div>
+
+    <div id="sidebar">
+        <h2>CHATBOOST</h2>
+        <p style="color: var(--text-muted); font-size:0.75rem; font-weight: 500;">OMNI-CONSOLE V3</p>
+        <hr>
+        <div class="nav-item active" onclick="switchTab('analytics')">📊 Analytics</div>
+        <div class="nav-item" onclick="switchTab('reservations')">📅 Delivery & Orders</div>
+        <div class="nav-item" onclick="switchTab('rules')">🛠️ FAQ Rules</div>
+        <div class="nav-item" onclick="switchTab('knowledge')">🧠 Knowledge Base</div>
+        <div class="nav-item" onclick="switchTab('billing')">💳 Billing & Plans</div>
+        <div class="nav-item" onclick="switchTab('settings')">🎨 Theme & Branding</div>
+        <div class="nav-item" onclick="window.location.href='/'" style="margin-top:auto;">🚪 Logout</div>
+    </div>
+
+    <div id="content">
+        <div class="header">
+            <h1 id="company-title" style="font-weight: 900; letter-spacing: -0.04em;">Omni-Console</h1>
+            <div style="display:flex; align-items:center; gap:20px;">
+                <div id="usage-container" style="text-align:right; display:none;">
+                    <p style="font-size:10px; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Monthly Usage: <span id="usage-text" style="color:white; font-weight:700;">0/50</span></p>
+                    <div style="width:120px; height:4px; background:rgba(255,255,255,0.05); border-radius:10px; overflow:hidden;">
+                        <div id="usage-bar" style="width:0%; height:100%; background:var(--primary); box-shadow: 0 0 10px var(--primary-glow);"></div>
+                    </div>
+                </div>
+                <span id="plan-badge" class="tag" style="background:var(--primary); color:white; box-shadow: 0 0 15px var(--primary-glow);">PRO TIER</span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="card stat-card"><p>Active Chats</p><h3 id="stat-active-chats">0</h3></div>
+            <div class="card stat-card" style="border-color:var(--accent-green);"><p>Total Orders</p><h3 id="stat-total-res">0</h3></div>
+            <div class="card stat-card" style="border-color:#FFC107;"><p>AI Confidence</p><h3 id="stat-avg-conf">92%</h3></div>
+            <div class="card stat-card" style="border-color:#F44336;"><p>Review Needed</p><h3 id="stat-needs-review">0</h3></div>
+        </div>
+
+        <!-- ANALYTICS TAB -->
+        <div id="tab-analytics" class="tab-content active">
+            <div class="card" style="background: linear-gradient(135deg, rgba(187, 0, 255, 0.15), rgba(112, 0, 255, 0.15)); border-color: rgba(187, 0, 255, 0.3);">
+                <h2 style="color:white;">🧠 Live Agentic Trends</h2>
+                <div id="trend-container"><p style="color:var(--text-muted);">Analyzing fast-food data loops...</p></div>
+            </div>
+            
+            <div class="card terminal-card">
+                <div class="terminal-header">
+                    <div class="dot dot-red"></div>
+                    <div class="dot dot-yellow"></div>
+                    <div class="dot dot-green"></div>
+                    <span style="font-size: 0.75rem; color: #666; font-family: 'Geist Mono', monospace; margin-left: 10px;">live_agent_logs.sh</span>
+                </div>
+                <div class="terminal-body" id="logs-terminal">
+                    <!-- Logs will be populated here as well as the table -->
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Recent Interactions</h2>
+                <div style="overflow-x:auto;">
+                    <table id="logs-table">
+                        <thead>
+                            <tr><th>Time</th><th>User</th><th>AI Response</th><th>Source</th></tr>
+                        </thead>
+                        <tbody id="logs-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ORDERS/RESERVATIONS TAB -->
+        <div id="tab-reservations" class="tab-content">
+            <div class="card">
+                <h2>📅 Order & Delivery Queue</h2>
+                <div style="overflow-x:auto;">
+                    <table id="reservations-table">
+                        <thead><tr><th>Customer</th><th>Date/Time</th><th>Pax/Items</th></tr></thead>
+                        <tbody id="reservations-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- RULES TAB -->
+        <div id="tab-rules" class="tab-content">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap:32px;">
+                <div class="card">
+                    <h2>🛠️ Add Instant Rule</h2>
+                    <form id="rule-form">
+                        <label style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; display:block;">Trigger Keyword</label>
+                        <input type="text" id="rule-keyword" placeholder="e.g. 'vegan' or 'opening hours'" required>
+                        <label style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; display:block;">AI Payload</label>
+                        <textarea id="rule-response" placeholder="How should the AI respond?" style="height:120px;" required></textarea>
+                        <button type="submit" class="btn" style="width:100%;">Deploy Rule</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h2>Active Logic Gates</h2>
+                    <div style="overflow-x:auto;">
+                        <table id="rules-table">
+                            <thead><tr><th>Keyword</th><th>Action</th></tr></thead>
+                            <tbody id="rules-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KNOWLEDGE BASE TAB -->
+        <div id="tab-knowledge" class="tab-content">
+            <div class="card">
+                <h2>🧠 Neural Knowledge Base (RAG)</h2>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:32px;">Upload menu data, store protocols, or service guidelines. The Omni-Engine indexes this into high-dimensional vector space for instant recall.</p>
+                <form id="kb-form">
+                    <textarea id="set-kb" placeholder="Paste raw documentation here..." style="height:250px; font-family:'Geist Mono', monospace; font-size:0.8rem;"></textarea>
+                    <button type="submit" class="btn">Update Neural Map</button>
+                </form>
+                <hr style="margin:32px 0; border:0; border-top:1px solid var(--glass-border);">
+                <h3>Sync Binary Source (PDF)</h3>
+                <div style="display:flex; gap:16px; margin-top:16px; align-items: center;">
+                    <input type="file" id="kb-pdf" accept=".pdf" style="margin-bottom:0; flex:1;">
+                    <button onclick="uploadPDF()" class="btn btn-outline">Upload & Sync</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- BILLING TAB -->
+        <div id="tab-billing" class="tab-content">
+            <div class="card" style="text-align:center; padding: 60px 24px;">
+                <p style="color:var(--text-muted); text-transform:uppercase; letter-spacing: 0.1em; font-size:0.8rem;">Active Subscription</p>
+                <h1 id="current-plan-display" style="color:var(--primary); font-size:4rem; margin:16px 0; font-weight:900; letter-spacing:-0.04em;">PRO TIER</h1>
+                <p style="color:var(--text-muted); margin-bottom:40px;">Billed Monthly: €199/mo (Enterprise SLA)</p>
+                <button onclick="alert('Redirecting to Stripe...')" class="btn" style="padding:16px 48px; border-radius:14px;">Manage Billing & Invoices</button>
+            </div>
+        </div>
+        
+        <!-- SETTINGS TAB -->
+        <div id="tab-settings" class="tab-content">
+             <div class="card">
+                <h2>🎨 Identity & Virtual Branding</h2>
+                <form id="branding-form">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                        <div><label style="font-size:0.75rem; color:var(--text-muted);">AI Entity Name</label><input type="text" id="set-name"></div>
+                        <div><label style="font-size:0.75rem; color:var(--text-muted);">Virtual Subdomain</label><input type="text" id="set-subdomain"></div>
+                    </div>
+                    <button type="submit" class="btn">Update Branding</button>
+                </form>
+             </div>
+
+             <div class="card">
+                <h2>📱 Omnichannel Integration (Meta)</h2>
+                <form id="social-form">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                        <div><label style="font-size:0.75rem; color:var(--text-muted);">WhatsApp Business ID</label><input type="text" id="set-wa-id"></div>
+                        <div><label style="font-size:0.75rem; color:var(--text-muted);">Instagram Professional ID</label><input type="text" id="set-ig-id"></div>
+                    </div>
+                    <label style="font-size:0.75rem; color:var(--text-muted);">Meta Long-Lived Token</label>
+                    <input type="password" id="set-meta-token" placeholder="••••••••••••••••">
+                    <button type="submit" class="btn">Sync Channels</button>
+                </form>
+             </div>
+
+             <div class="card">
+                <h2>📩 Autonomous Email Dispatcher</h2>
+                <form id="email-form">
+                    <div style="margin-bottom:24px; background: rgba(255,255,255,0.02); padding: 16px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                        <label style="display:flex; align-items:center; gap:12px; cursor:pointer;">
+                            <input type="checkbox" id="set-email-enabled" style="width:20px; height:20px; margin:0; cursor:pointer;"> 
+                            <span style="font-weight:600; font-size:0.9rem;">Enable AI Email Automation</span>
+                        </label>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                        <div><label style="font-size:0.75rem; color:var(--text-muted);">SMTP User</label><input type="text" id="set-email-user" placeholder="admin@shinju.ai"></div>
+                        <div><label style="font-size:0.75rem; color:var(--text-muted);">SMTP Key</label><input type="password" id="set-email-pass" placeholder="••••••••"></div>
+                    </div>
+                    <button type="submit" class="btn">Deploy Email Agent</button>
+                </form>
+             </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://keiz-chatbot-saas-1.onrender.com';
+        
+        // Auto-login from URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('api_key')) {
+            localStorage.setItem("chatboost_admin_key", urlParams.get('api_key'));
+            // Remove the key from the URL for security/cleanliness
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+        
+        let API_KEY = localStorage.getItem("chatboost_admin_key");
+
+        async function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.nav-item, .m-nav-item').forEach(i => i.classList.remove('active'));
+            
+            const tabEl = document.getElementById(`tab-${tab}`);
+            if(tabEl) tabEl.classList.add('active');
+            
+            // Highlight nav items
+            document.querySelectorAll(`.nav-item`).forEach(el => {
+                const text = el.innerText.toLowerCase();
+                if(text.includes(tab) || (tab === 'settings' && text.includes('theme'))) el.classList.add('active');
+            });
+            document.querySelectorAll(`.m-nav-item`).forEach(el => {
+                if(el.onclick.toString().includes(tab)) el.classList.add('active');
+            });
+
+            if (tab === 'analytics') { fetchLogs(); fetchTrends(); fetchStats(); }
+            if (tab === 'reservations') fetchReservations();
+            if (tab === 'rules') fetchRules();
+            if (tab === 'settings' || tab === 'billing') fetchSettings();
+            if (tab === 'knowledge') checkPlanForBrain();
+            }
+
+        async function fetchStats() {
+            try {
+                const res = await fetch(`${API_BASE}/admin/stats`, { headers: {"X-API-Key": API_KEY} });
+                const s = await res.json();
+                document.getElementById("stat-active-chats").innerText = s.active_chats;
+                document.getElementById("stat-total-res").innerText = s.total_reservations;
+                document.getElementById("stat-needs-review").innerText = s.needs_review;
+                
+                // Super Admin Logic
+                const admin_email = "traore.m.2007@gmail.com";
+                // We'd ideally get current user email from API, but for now we check if plan is 'enterprise+' or similar if we wanted, 
+                // but let's assume we can fetch settings to check email
+                const settingsRes = await fetch(`${API_BASE}/admin/settings`, { headers: {"X-API-Key": API_KEY} });
+                const config = await settingsRes.json();
+                const isSuperAdmin = config.email.toLowerCase() === admin_email.toLowerCase();
+
+                // Usage Bar Logic (Hide for Super Admin)
+                if (s.message_limit && !isSuperAdmin) {
+                    document.getElementById('usage-container').style.display = 'block';
+                    document.getElementById('usage-text').innerText = `${s.message_count}/${s.message_limit}`;
+                    const pct = Math.min((s.message_count / s.message_limit) * 100, 100);
+                    document.getElementById('usage-bar').style.width = `${pct}%`;
+                    if (pct > 90) document.getElementById('usage-bar').style.background = '#ff4b2b';
+                } else {
+                    document.getElementById('usage-container').style.display = 'none';
+                }
+
+                const badge = document.getElementById('plan-badge');
+                badge.innerText = isSuperAdmin ? "ROOT ADMIN" : `${s.plan.toUpperCase()} TIER`;
+                if (isSuperAdmin) badge.style.background = 'linear-gradient(90deg, #BB00FF, #00ff88)';
+                else if (s.plan === 'free') badge.style.background = '#666';
+                else if (s.plan === 'starter') badge.style.background = '#0070f3';
+                
+                // Lock features visually (Bypass for Super Admin)
+                if (!isSuperAdmin && (s.plan === 'starter' || s.plan === 'free')) {
+                    const sf = document.getElementById('social-form');
+                    if (sf && !sf.innerHTML.includes("🔒")) {
+                        sf.style.opacity = '0.4';
+                        sf.style.pointerEvents = 'none';
+                        sf.innerHTML += '<div style="color:var(--primary); font-weight:700; margin-top:10px;">🔒 PRO FEATURE: Upgrade to unlock Meta API</div>';
+                    }
+                }
+            } catch(e) {}
+        }
+
+        function checkPlanForBrain() {
+            fetch(`${API_BASE}/admin/settings`, { headers: {"X-API-Key": API_KEY} })
+                .then(r => r.json())
+                .then(config => {
+                    const admin_email = "traore.m.2007@gmail.com";
+                    const isSuperAdmin = config.email.toLowerCase() === admin_email.toLowerCase();
+                    
+                    if (!isSuperAdmin && (config.plan === 'free' || config.plan === 'starter')) {
+                        document.getElementById('tab-knowledge').innerHTML = `
+                            <div class="card" style="text-align:center; padding:100px 20px;">
+                                <h1 style="font-size:3rem; margin-bottom:20px;">🧠</h1>
+                                <h2 style="color:white;">Advanced RAG is Locked</h2>
+                                <p style="color:var(--text-muted); max-width:400px; margin:20px auto;">The Neural Knowledge Base (PDF Training) is only available on <strong>Professional</strong> and <strong>Enterprise</strong> plans.</p>
+                                <button class="btn" onclick="switchTab('billing')">Upgrade Now</button>
+                            </div>
+                        `;
+                    }
+                });
+        }
+        async function fetchLogs() {
+            try {
+                const res = await fetch(`${API_BASE}/admin/logs`, { headers: {"X-API-Key": API_KEY} });
+                const logs = await res.json();
+                const tbody = document.getElementById("logs-body");
+                const terminal = document.getElementById("logs-terminal");
+                
+                tbody.innerHTML = logs.map(l => `<tr><td>${new Date(l.timestamp).toLocaleTimeString()}</td><td>${l.user_msg}</td><td>${l.bot_reply}</td><td>${l.source}</td></tr>`).join('');
+                
+                // Populate terminal
+                terminal.innerHTML = logs.slice(0, 15).map(l => `
+                    <div class="terminal-line">
+                        <span class="terminal-timestamp">[${new Date(l.timestamp).toLocaleTimeString()}]</span>
+                        <span class="terminal-status">SYS.INF:</span>
+                        <span class="terminal-msg">User: "${l.user_msg.substring(0, 20)}..." | AI: "${l.bot_reply.substring(0, 20)}..."</span>
+                    </div>
+                `).join('');
+            } catch(e) {}
+        }
+
+        async function fetchTrends() {
+            try {
+                const res = await fetch(`${API_BASE}/admin/analytics/trends`, { headers: {"X-API-Key": API_KEY} });
+                const d = await res.json();
+                const container = document.getElementById("trend-container");
+                if (d.trends) container.innerHTML = d.trends.map(t => `<div style="background:rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding:14px; margin-bottom:12px; border-radius:12px; font-size:0.85rem; color:#eee;"><span style="color:var(--primary); font-weight:700;">INSIGHT:</span> ${t.insight_text}</div>`).join('');
+            } catch(e) {}
+        }
+
+        async function fetchReservations() {
+            try {
+                const res = await fetch(`${API_BASE}/admin/reservations`, { headers: {"X-API-Key": API_KEY} });
+                const data = await res.json();
+                document.getElementById("reservations-body").innerHTML = data.map(r => `<tr><td>${r.customer_name}</td><td>${r.date_time}</td><td>${r.pax} Items</td></tr>`).join('');
+            } catch(e) {}
+        }
+
+        async function fetchRules() {
+            try {
+                const res = await fetch(`${API_BASE}/admin/rules`, { headers: {"X-API-Key": API_KEY} });
+                const data = await res.json();
+                document.getElementById("rules-body").innerHTML = data.map(r => `<tr><td><span style="font-family:'Geist Mono'; color:var(--primary);">${r.keyword}</span></td><td><button onclick="deleteRule(${r.id})" style="color:#ff5f56; background:none; border:none; cursor:pointer; font-weight:600;">Delete Rule</button></td></tr>`).join('');
+            } catch(e) {}
+        }
+
+        async function deleteRule(id) {
+            if(!confirm("Delete this rule?")) return;
+            await fetch(`${API_BASE}/admin/rules/${id}`, { method: 'DELETE', headers: {"X-API-Key": API_KEY} });
+            fetchRules();
+        }
+
+        async function fetchSettings() {
+            try {
+                const res = await fetch(`${API_BASE}/admin/settings`, { headers: {"X-API-Key": API_KEY} });
+                const s = await res.json();
+                document.getElementById("set-name").value = s.name || "";
+                document.getElementById("set-subdomain").value = s.subdomain || "";
+                document.getElementById("set-wa-id").value = s.whatsapp_phone_id || "";
+                document.getElementById("set-ig-id").value = s.instagram_page_id || "";
+                document.getElementById("set-email-user").value = s.email_user || "";
+                document.getElementById("set-email-enabled").checked = s.email_automation_enabled || false;
+                document.getElementById("set-kb").value = s.knowledge_base || "";
+                document.getElementById("plan-badge").innerText = (s.plan || "free").toUpperCase() + " TIER";
+                document.getElementById("current-plan-display").innerText = (s.plan || "free").toUpperCase() + " TIER";
+            } catch(e) {}
+        }
+
+        document.getElementById("branding-form").onsubmit = async (e) => {
+            e.preventDefault();
+            await updateSettings({ name: document.getElementById("set-name").value, subdomain: document.getElementById("set-subdomain").value });
+        };
+
+        document.getElementById("kb-form").onsubmit = async (e) => {
+            e.preventDefault();
+            await updateSettings({ knowledge_base: document.getElementById("set-kb").value });
+        };
+
+        async function uploadPDF() {
+            const fileInput = document.getElementById("kb-pdf");
+            const file = fileInput.files[0];
+            const btn = document.querySelector("button[onclick='uploadPDF()']");
+            
+            if(!file) return alert("Please select a PDF file first.");
+            
+            btn.innerText = "INDEXING...";
+            btn.disabled = true;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const res = await fetch(`${API_BASE}/admin/kb/upload`, {
+                    method: 'POST',
+                    headers: { 'X-API-Key': API_KEY },
+                    body: formData
+                });
+                
+                const result = await res.json();
+                
+                if (res.ok) {
+                    alert(`Success! Indexed ${result.extracted_length} characters of knowledge.`);
+                    fetchSettings(); 
+                } else {
+                    alert("Upload failed: " + (result.detail || "Server Error"));
+                }
+            } catch (e) {
+                alert("Network error during upload.");
+            } finally {
+                btn.innerText = "Upload & Sync";
+                btn.disabled = false;
+                fileInput.value = ""; 
+            }
+        }
+
+        document.getElementById("social-form").onsubmit = async (e) => {
+            e.preventDefault();
+            await updateSettings({
+                whatsapp_phone_id: document.getElementById("set-wa-id").value,
+                instagram_page_id: document.getElementById("set-ig-id").value,
+                instagram_access_token: document.getElementById("set-meta-token").value
+            });
+        };
+
+        document.getElementById("email-form").onsubmit = async (e) => {
+            e.preventDefault();
+            await updateSettings({
+                email_user: document.getElementById("set-email-user").value,
+                email_password: document.getElementById("set-email-pass").value,
+                email_automation_enabled: document.getElementById("set-email-enabled").checked
+            });
+        };
+
+        async function updateSettings(data) {
+            const res = await fetch(`${API_BASE}/admin/settings`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) alert("Settings synchronized.");
+            else alert("Update failed.");
+        }
+
+        document.getElementById("rule-form").onsubmit = async (e) => {
+            e.preventDefault();
+            const res = await fetch(`${API_BASE}/admin/rules`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+                body: JSON.stringify({
+                    keyword: document.getElementById("rule-keyword").value,
+                    response: document.getElementById("rule-response").value
+                })
+            });
+            if(res.ok) { alert("Rule added."); fetchRules(); e.target.reset(); }
+        };
+
+        window.onload = async () => {
+            if (!API_KEY) API_KEY = localStorage.getItem("chatboost_admin_key");
+            
+            const res = await fetch(`${API_BASE}/widget/config`);
+            if (res.ok) {
+                const config = await res.json();
+                document.getElementById("company-title").innerText = config.name;
+                if (config.api_key && !API_KEY) { 
+                    API_KEY = config.api_key; 
+                    localStorage.setItem("chatboost_admin_key", API_KEY); 
+                }
+            }
+
+            if (!API_KEY) {
+                window.location.href = "/login";
+                return;
+            }
+
+            switchTab('analytics');
+        };
+    </script>
+</body>
+</html>

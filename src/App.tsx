@@ -148,7 +148,7 @@ function App() {
         if (!response.ok) throw new Error('Signup failed');
         
         const data = await response.json();
-        dbUrl = data.dashboard_url;
+        dbUrl = `/dashboard.html?api_key=${data.api_key}`;
         console.log('INTEGRATION_SUCCESS: Lead registered and email dispatched via backend.');
     } catch {
         console.warn('INTEGRATION_NOTICE: Backend registration failed. Ensure the FastAPI server is running on port 8000.');
