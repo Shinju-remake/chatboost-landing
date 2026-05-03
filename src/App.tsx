@@ -138,7 +138,8 @@ function App() {
 
     // Actual Backend Registration & Email Dispatch
     try {
-        const response = await fetch('http://localhost:8000/auth/signup', {
+        const API_BASE = import.meta.env.VITE_API_URL || 'https://keiz-chatbot-saas-1.onrender.com';
+        const response = await fetch(`${API_BASE}/auth/signup`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(signupData)
