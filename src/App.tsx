@@ -16,19 +16,41 @@ function App() {
 
   const [isDemoOpen, setIsDemoOpen] = useState(false);
   const [demoMessages, setDemoMessages] = useState([
-    { role: 'bot', text: 'Hi! I am the ChatBoost by Shinju AI. How can I help your business today?' }
+    { role: 'bot', text: 'Hi! I am the ChatBoost by Shinju AI assistant. How can I help your business today?' }
   ]);
   const [userInput, setUserInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
 
   const sendDemoMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userInput.trim()) return;
-    const newMessages = [...demoMessages, { role: 'user', text: userInput }];
+    const input = userInput.trim();
+    if (!input || isTyping) return;
+
+    const newMessages = [...demoMessages, { role: 'user', text: input }];
     setDemoMessages(newMessages);
     setUserInput('');
+    setIsTyping(true);
+
+    // AI Intent Logic
     setTimeout(() => {
-      setDemoMessages([...newMessages, { role: 'bot', text: 'That sounds interesting! ChatBoost by Shinju AI can automate exactly that for you. Would you like to see our pricing?' }]);
-    }, 1000);
+      let response = "That's a great question! ChatBoost by Shinju AI is designed to handle exactly that. Would you like to see our pricing or try a free trial?";
+      const lowerInput = input.toLowerCase();
+
+      if (lowerInput.includes('hello') || lowerInput.includes('hi') || lowerInput.includes('hey')) {
+        response = "Hello! I'm here to show you how Shinju AI can transform your customer engagement. What kind of business do you run?";
+      } else if (lowerInput.includes('price') || lowerInput.includes('cost') || lowerInput.includes('plan')) {
+        response = "Our plans start at $49/mo for small businesses, while our Professional plan ($199/mo) is our most popular for growing teams. You can see the full breakdown on this page!";
+      } else if (lowerInput.includes('work') || lowerInput.includes('how')) {
+        response = "It's simple: 1. Connect your data, 2. Customize your AI's personality, and 3. Go live on your site, WhatsApp, or Instagram. We handle the heavy lifting!";
+      } else if (lowerInput.includes('restaurant') || lowerInput.includes('food') || lowerInput.includes('order')) {
+        response = "We love restaurants! In fact, Shinju Bistro saw a 300% increase in order volume using our AI Waiter. I can help you automate bookings and menu inquiries too.";
+      } else if (lowerInput.includes('real estate') || lowerInput.includes('lead')) {
+        response = "For real estate, we focus on 24/7 lead qualification. We can ask prospects about their budget, location, and timeline so your agents only talk to serious buyers.";
+      }
+
+      setDemoMessages([...newMessages, { role: 'bot', text: response }]);
+      setIsTyping(false);
+    }, 1500);
   };
 
   const [modalContent, setModalContent] = useState('');
@@ -2286,6 +2308,16 @@ function App() {
                 {m.text}
               </div>
             ))}
+            {isTyping && (
+              <div style={{ alignSelf: 'flex-start', backgroundColor: 'white', padding: '12px 18px', borderRadius: '18px 18px 18px 4px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', gap: '4px', alignItems: 'center' }}>
+                <div style={{ width: '6px', height: '6px', background: '#ddd', borderRadius: '50%', animation: 'bounce 1s infinite 0s' }}></div>
+                <div style={{ width: '6px', height: '6px', background: '#ddd', borderRadius: '50%', animation: 'bounce 1s infinite 0.2s' }}></div>
+                <div style={{ width: '6px', height: '6px', background: '#ddd', borderRadius: '50%', animation: 'bounce 1s infinite 0.4s' }}></div>
+              </div>
+            )}
+            <style>{`
+                @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+            `}</style>
           </div>
           <form onSubmit={sendDemoMessage} style={{ padding: '15px', borderTop: '1px solid #eee', display: 'flex', background: 'white' }}>
             <input 
