@@ -793,30 +793,23 @@
 
         window.onload = async () => {
             console.log("Dashboard initializing...");
-            if (!API_KEY) API_KEY = localStorage.getItem("chatboost_admin_key");
+            const urlParams = new URLSearchParams(window.location.search);
             
-            console.log("Retrieving config from:", API_BASE);
-            const res = await fetch(`${API_BASE}/widget/config`);
-            console.log("Config fetch status:", res.status);
-            if (res.ok) {
-                const config = await res.json();
-                console.log("Config received:", config);
-                document.getElementById("company-title").innerText = config.name;
-                if (config.api_key && !API_KEY) { 
-                    API_KEY = config.api_key; 
-                    localStorage.setItem("chatboost_admin_key", API_KEY); 
-                }
+            // Prioritize URL key if present
+            if (urlParams.has('api_key')) {
+                API_KEY = urlParams.get('api_key');
+                localStorage.setItem("chatboost_admin_key", API_KEY);
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else {
+                API_KEY = localStorage.getItem("chatboost_admin_key");
             }
 
             if (!API_KEY) {
-                console.log("No API_KEY found, redirecting to login.");
                 window.location.href = "/login";
                 return;
             }
 
-            console.log("Calling fetchStats...");
             await fetchStats();
-            console.log("Calling switchTab...");
             switchTab('analytics');
         };
     </script>
