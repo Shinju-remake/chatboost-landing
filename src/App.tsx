@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import emailjs from '@emailjs/browser';
-// eslint-disable-line no-unused-vars
 
 function App() {
   
@@ -9,6 +7,7 @@ function App() {
   
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const wf = (window as any).Webflow;
     if (wf && wf.ready) {
         wf.ready();
@@ -116,11 +115,15 @@ function App() {
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const data = {
-        user_name: formData.get('user_name'),
-        user_email: formData.get('user_email'),
-        business_name: formData.get('business_name'),
-        niche: formData.get('niche'),
+    const businessName = formData.get('business_name') as string;
+    const userEmail = formData.get('user_email') as string;
+    const userName = formData.get('user_name') as string;
+
+    const signupData = {
+        name: businessName,
+        subdomain: businessName.toLowerCase().replace(/[^a-z0-9]/g, ''),
+        email: userEmail,
+        plan: "free"
     };
 
     setOnboardingStep(1);
@@ -129,40 +132,25 @@ function App() {
     setTimeout(() => setOnboardingStep(2), 1500);
     setTimeout(() => setOnboardingStep(3), 3000);
 
-    // Actual Email & Webhook Integration
+    // Actual Backend Registration & Email Dispatch
     try {
-        // 1. Webhook to Agency CRM / Make.com
-        fetch('https://hook.make.com/placeholder_url_for_pro_tier', {
+        const response = await fetch('http://localhost:8000/auth/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...data, type: 'CONTACT_FORM_SUBMISSION', source: 'CHATBOOST_LANDING_PAGE' })
-        }).catch(() => {});
+            body: JSON.stringify(signupData)
+        });
 
-        // 2. EmailJS - Admin Notification
-        await emailjs.send(
-            'service_shinju_ai', 
-            'template_admin_notice', 
-            data,
-            'user_public_key'
-        );
-
-        // 3. EmailJS - User Demo Confirmation
-        await emailjs.send(
-            'service_shinju_ai', 
-            'template_user_demo', 
-            data,
-            'user_public_key'
-        );
+        if (!response.ok) throw new Error('Signup failed');
         
-        console.log('INTEGRATION_SUCCESS: Lead captured and emails dispatched.');
-    } catch (error) {
-        console.warn('INTEGRATION_NOTICE: Emails will be sent once real API keys are provided in App.tsx.');
+        console.log('INTEGRATION_SUCCESS: Lead registered and email dispatched via backend.');
+    } catch {
+        console.warn('INTEGRATION_NOTICE: Backend registration failed. Ensure the FastAPI server is running on port 8000.');
     }
 
     setTimeout(() => {
         setIsModalOpen(false);
         setOnboardingStep(0);
-        setModalContent(`Welcome ${data.user_name}! Your AI dashboard for ${data.business_name} is being provisioned. Check your email for the scheduled demo invitation.`);
+        setModalContent(`Welcome ${userName}! Your AI dashboard for ${businessName} is being provisioned. Check your email (${userEmail}) for the confirmation.`);
         setIsModalOpen(true);
     }, 4500);
   };
