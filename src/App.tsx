@@ -16,16 +16,25 @@ function App() {
 
   const [isDemoOpen, setIsDemoOpen] = useState(false);
   const [demoMessages, setDemoMessages] = useState([
-    { role: 'bot', text: 'Hi! I am the ChatBoost by Shinju AI assistant. How can I help your business today?' }
+    { role: 'bot', text: 'Hi! I am the ChatBoost by Shinju AI assistant. I can show you how our AI transforms business operations. Which would you like to explore?' }
   ]);
   const [userInput, setUserInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
-  const sendDemoMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-    const input = userInput.trim();
-    if (!input || isTyping) return;
+  const quickQuestions = [
+    "How does it work?",
+    "Show me pricing",
+    "Restaurant demo",
+    "Real Estate demo",
+    "How do I get started?"
+  ];
 
+  const handleQuickQuestion = (question: string) => {
+    if (isTyping) return;
+    processMessage(question);
+  };
+
+  const processMessage = (input: string) => {
     const newMessages = [...demoMessages, { role: 'user', text: input }];
     setDemoMessages(newMessages);
     setUserInput('');
@@ -37,20 +46,29 @@ function App() {
       const lowerInput = input.toLowerCase();
 
       if (lowerInput.includes('hello') || lowerInput.includes('hi') || lowerInput.includes('hey')) {
-        response = "Hello! I'm here to show you how Shinju AI can transform your customer engagement. What kind of business do you run?";
+        response = "Hello! I'm here to show you how Shinju AI can transform your customer engagement. Select one of the options below to see me in action!";
       } else if (lowerInput.includes('price') || lowerInput.includes('cost') || lowerInput.includes('plan')) {
-        response = "Our plans start at $49/mo for small businesses, while our Professional plan ($199/mo) is our most popular for growing teams. You can see the full breakdown on this page!";
+        response = "Our plans start at $49/mo for small businesses. Our Professional plan ($199/mo) includes advanced RAG (Knowledge Base) and WhatsApp integration. Which one fits your needs?";
       } else if (lowerInput.includes('work') || lowerInput.includes('how')) {
-        response = "It's simple: 1. Connect your data, 2. Customize your AI's personality, and 3. Go live on your site, WhatsApp, or Instagram. We handle the heavy lifting!";
+        response = "It's a simple 3-step process: 1. Connect your business data, 2. Customize the AI's tone, and 3. Deploy to your site or social media. We handle the technical setup!";
       } else if (lowerInput.includes('restaurant') || lowerInput.includes('food') || lowerInput.includes('order')) {
-        response = "We love restaurants! In fact, Shinju Bistro saw a 300% increase in order volume using our AI Waiter. I can help you automate bookings and menu inquiries too.";
+        response = "For restaurants like Shinju Bistro, I act as an AI Waiter—taking orders, handling bookings, and up-selling sides automatically. Order volume usually jumps by 300%!";
       } else if (lowerInput.includes('real estate') || lowerInput.includes('lead')) {
-        response = "For real estate, we focus on 24/7 lead qualification. We can ask prospects about their budget, location, and timeline so your agents only talk to serious buyers.";
+        response = "In real estate, I qualify leads 24/7 by asking about budget and location. This ensures your agents only spend time on high-intent buyers.";
+      } else if (lowerInput.includes('start')) {
+        response = "Ready to boost your sales? Click the 'Get Started' button on the page to begin your 14-day free trial. I can have your first bot ready in minutes!";
       }
 
       setDemoMessages([...newMessages, { role: 'bot', text: response }]);
       setIsTyping(false);
-    }, 1500);
+    }, 1200);
+  };
+
+  const sendDemoMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    const input = userInput.trim();
+    if (!input || isTyping) return;
+    processMessage(input);
   };
 
   const [modalContent, setModalContent] = useState('');
@@ -2314,6 +2332,31 @@ function App() {
                 <div style={{ width: '6px', height: '6px', background: '#ddd', borderRadius: '50%', animation: 'bounce 1s infinite 0.2s' }}></div>
                 <div style={{ width: '6px', height: '6px', background: '#ddd', borderRadius: '50%', animation: 'bounce 1s infinite 0.4s' }}></div>
               </div>
+            )}
+            {!isTyping && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
+                    {quickQuestions.map((q, idx) => (
+                        <button 
+                            key={idx} 
+                            onClick={() => handleQuickQuestion(q)}
+                            style={{ 
+                                background: 'white', 
+                                border: '1px solid #BB00FF', 
+                                color: '#BB00FF', 
+                                padding: '6px 12px', 
+                                borderRadius: '12px', 
+                                fontSize: '12px', 
+                                fontWeight: 600, 
+                                cursor: 'pointer',
+                                transition: 'all 0.2s'
+                            }}
+                            onMouseOver={(e) => { e.currentTarget.style.background = '#BB00FF'; e.currentTarget.style.color = 'white'; }}
+                            onMouseOut={(e) => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = '#BB00FF'; }}
+                        >
+                            {q}
+                        </button>
+                    ))}
+                </div>
             )}
             <style>{`
                 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
