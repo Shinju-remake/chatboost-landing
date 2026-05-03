@@ -1486,7 +1486,7 @@ function App() {
               <button onClick={() => { setModalContent('ONBOARDING'); setIsModalOpen(true); }} className="button w-button" style={{ width: '100%' }}>Get Started</button>
             </div>
             <div className="card-link height_100percent on-accent-primary" style={{ padding: '40px', borderRadius: '24px', border: '2px solid #BB00FF', display: 'flex', flexDirection: 'column', position: 'relative', background: '#fff', boxShadow: '0 20px 40px rgba(187, 0, 255, 0.1)' }}>
-              <div style={{ position: 'absolute', top: '-15px', right: '20px', background: '#BB00FF', color: 'white', padding: '5px 15px', borderRadius: '20px', fontSize: '12px', fontWeight: 900 }}>MOST POPULAR</div>
+              <div style={{ position: 'absolute', top: '24px', right: '24px', background: '#BB00FF', color: 'white', padding: '5px 15px', borderRadius: '20px', fontSize: '12px', fontWeight: 900 }}>MOST POPULAR</div>
               <div className="eyebrow" style={{ color: '#BB00FF' }}>Professional</div>
               <div className="heading_hero" style={{ fontSize: '3rem', margin: '10px 0 0 0' }}>$99<span style={{ fontSize: '1rem', color: '#888' }}>/mo maintenance</span></div>
               <p style={{ color: '#888', fontSize: '0.85rem', marginBottom: '20px', fontWeight: 600 }}>+ $149 one-time setup fee</p>
