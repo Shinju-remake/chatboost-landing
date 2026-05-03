@@ -123,7 +123,7 @@ function App() {
 
     const signupData = {
         name: businessName,
-        subdomain: businessName.toLowerCase().replace(/[^a-z0-9]/g, ''),
+        subdomain: businessName.toLowerCase().replace(/[^a-z0-9]/g, '') + Math.floor(100 + Math.random() * 900),
         email: userEmail,
         plan: plan
     };
@@ -136,6 +136,7 @@ function App() {
 
     // Step 2: AI Training & Backend Sync (1.5s)
     let dbUrl = '';
+    let errorMessage = '';
     try {
         const API_BASE = import.meta.env.VITE_API_URL || 'https://keiz-chatbot-saas-1.onrender.com';
         const response = await fetch(`${API_BASE}/auth/signup`, {
@@ -144,12 +145,15 @@ function App() {
             body: JSON.stringify(signupData)
         });
 
+        const data = await response.json();
         if (response.ok) {
-            const data = await response.json();
             dbUrl = `/dashboard.html?api_key=${data.api_key}`;
+        } else {
+            errorMessage = data.detail || 'Signup failed';
         }
     } catch (err) {
         console.error('Signup Error:', err);
+        errorMessage = 'Network error or server unreachable.';
     }
 
     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -165,12 +169,11 @@ function App() {
         setDashboardUrl(dbUrl);
         setModalContent(`Success! Your AI dashboard for ${businessName} is live. Redirecting you now...`);
         setIsModalOpen(true);
-        // Automatic redirect after 2 seconds
         setTimeout(() => {
             window.location.href = dbUrl;
         }, 2000);
     } else {
-        setModalContent(`Welcome ${userName}! Your AI dashboard for ${businessName} is being provisioned. Check your email (${userEmail}) for the confirmation.`);
+        setModalContent(`Error: ${errorMessage}. Please try a different business name or check your connection.`);
         setIsModalOpen(true);
     }
   };
