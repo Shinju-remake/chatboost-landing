@@ -314,9 +314,9 @@
         <div id="nav-analytics" class="nav-item active" onclick="switchTab('analytics')">📊 Analytics</div>
         <div id="nav-reservations" class="nav-item" onclick="switchTab('reservations')">📅 Delivery & Orders</div>
         <div id="nav-rules" class="nav-item" onclick="switchTab('rules')">🛠️ FAQ Rules</div>
-        <div id="nav-knowledge" class="nav-item" onclick="switchTab('knowledge')">🧠 Knowledge Base</div>
+        <div id="nav-knowledge" class="nav-item" onclick="switchTab('knowledge')">🧠 Knowledge Base <span class="lock-icon" style="display:none;">🔒</span></div>
         <div id="nav-billing" class="nav-item" onclick="switchTab('billing')">💳 Billing & Plans</div>
-        <div id="nav-settings" class="nav-item" onclick="switchTab('settings')">🎨 Theme & Branding</div>
+        <div id="nav-settings" class="nav-item" onclick="switchTab('settings')">🎨 Theme & Branding <span class="lock-icon" style="display:none;">🔒</span></div>
         <div class="nav-item" onclick="window.location.href='/'" style="margin-top:auto;">🚪 Logout</div>
     </div>
 
@@ -539,6 +539,7 @@
         async function fetchStats() {
             try {
                 const res = await fetch(`${API_BASE}/admin/stats`, { headers: {"X-API-Key": API_KEY} });
+                if (!res.ok) return;
                 const s = await res.json();
                 
                 CURRENT_PLAN = (s.plan || "free").toLowerCase();
@@ -548,20 +549,24 @@
                 document.getElementById("stat-needs-review").innerText = s.needs_review;
                 
                 // Super Admin Logic
-                const admin_email = "traore.m.2007@gmail.com";
-                const settingsRes = await fetch(`${API_BASE}/admin/settings`, { headers: {"X-API-Key": API_KEY} });
-                const config = await settingsRes.json();
-                IS_SUPER_ADMIN = config.email.toLowerCase() === admin_email.toLowerCase();
+                try {
+                    const settingsRes = await fetch(`${API_BASE}/admin/settings`, { headers: {"X-API-Key": API_KEY} });
+                    if (settingsRes.ok) {
+                        const config = await settingsRes.json();
+                        const admin_email = "traore.m.2007@gmail.com";
+                        IS_SUPER_ADMIN = config.email.toLowerCase() === admin_email.toLowerCase();
+                    }
+                } catch(e) {}
 
-                // Usage Bar Logic (Hide for Super Admin)
+                // Usage Bar Logic
+                const usageCont = document.getElementById('usage-container');
                 if (s.message_limit && !IS_SUPER_ADMIN) {
-                    document.getElementById('usage-container').style.display = 'block';
+                    usageCont.style.display = 'block';
                     document.getElementById('usage-text').innerText = `${s.message_count}/${s.message_limit}`;
                     const pct = Math.min((s.message_count / s.message_limit) * 100, 100);
                     document.getElementById('usage-bar').style.width = `${pct}%`;
-                    if (pct > 90) document.getElementById('usage-bar').style.background = '#ff4b2b';
                 } else {
-                    document.getElementById('usage-container').style.display = 'none';
+                    usageCont.style.display = 'none';
                 }
 
                 const badge = document.getElementById('plan-badge');
@@ -572,21 +577,30 @@
                 } else {
                     const colors = { 'free': '#666', 'starter': '#0070f3', 'pro': '#BB00FF', 'enterprise': '#FFD700' };
                     badge.style.background = colors[CURRENT_PLAN] || '#BB00FF';
-                    if (CURRENT_PLAN === 'enterprise') badge.style.color = '#000';
+                    badge.style.color = CURRENT_PLAN === 'enterprise' ? '#000' : '#fff';
                 }
                 
-                // Update Sidebar Icons for Locked Features
-                if (!IS_SUPER_ADMIN && (CURRENT_PLAN === 'free' || CURRENT_PLAN === 'starter')) {
-                    document.getElementById('nav-knowledge').innerHTML = '🧠 Knowledge Base 🔒';
-                    document.getElementById('nav-settings').innerHTML = '🎨 Theme & Branding 🔒';
-                    document.getElementById('nav-knowledge').style.opacity = '0.5';
-                    document.getElementById('nav-settings').style.opacity = '0.5';
-                }
+                // Robust Sidebar Gating
+                const isGated = !IS_SUPER_ADMIN && (CURRENT_PLAN === 'free' || CURRENT_PLAN === 'starter');
+                const gatedIds = ['nav-knowledge', 'nav-settings'];
+                
+                gatedIds.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.style.opacity = isGated ? '0.5' : '1';
+                        const icon = el.querySelector('.lock-icon');
+                        if (icon) icon.style.display = isGated ? 'inline' : 'none';
+                    }
+                });
 
                 // Update Billing Tab
-                document.getElementById("current-plan-display").innerText = CURRENT_PLAN.toUpperCase() + " TIER";
-                const prices = { 'free': '€0/mo (Free Trial)', 'starter': '€29/mo (Standard)', 'pro': '€99/mo (Professional)', 'enterprise': '€299/mo (Custom SLA)' };
-                document.getElementById("current-plan-price").innerText = `Billed Monthly: ${prices[CURRENT_PLAN] || '€99/mo'}`;
+                const display = document.getElementById("current-plan-display");
+                const price = document.getElementById("current-plan-price");
+                if (display) display.innerText = CURRENT_PLAN.toUpperCase() + " TIER";
+                if (price) {
+                    const prices = { 'free': '€0/mo (Free Trial)', 'starter': '€29/mo (Standard)', 'pro': '€99/mo (Professional)', 'enterprise': '€299/mo (Custom SLA)' };
+                    price.innerText = `Billed Monthly: ${prices[CURRENT_PLAN] || '€99/mo'}`;
+                }
             } catch(e) { console.error("Stats Fetch Error:", e); }
         }
 
