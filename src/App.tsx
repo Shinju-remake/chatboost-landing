@@ -86,6 +86,83 @@ function App() {
   };
   return (
     <>
+      <style>{`
+        .nav.is-accent-primary {
+            background-color: rgba(10, 10, 10, 0.85) !important;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            height: 80px;
+            display: flex;
+            align-items: center;
+        }
+        .nav_container {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav_link {
+            color: #a1a1aa !important;
+            transition: color 0.3s;
+        }
+        .nav_link:hover {
+            color: white !important;
+        }
+        .nav_logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+        .nav_logo-icon {
+            width: 32px;
+            height: 32px;
+            color: #BB00FF;
+        }
+        .modal_input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            color: #1a1a1a;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .modal_input:focus {
+            border-color: #BB00FF;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(187, 0, 255, 0.1);
+        }
+        .button.on-accent-primary {
+            background-color: #BB00FF !important;
+            color: white !important;
+            font-weight: 700 !important;
+            transition: all 0.3s !important;
+        }
+        .button.on-accent-primary:hover {
+            background-color: #d100ff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(187, 0, 255, 0.2);
+        }
+        .logo-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+        .heading_primary_modal {
+            font-size: 2rem !important;
+            font-weight: 900 !important;
+            letter-spacing: -0.04em !important;
+            line-height: 1.1 !important;
+        }
+      `}</style>
       <div className="nav is-accent-primary">
         <div
           data-duration="400"
@@ -99,7 +176,7 @@ function App() {
         >
           <div className="nav_left">
             <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({top: 0, behavior: "smooth"}); }} className="nav_logo w-inline-block">
-              <div className="nav_logo-icon">
+              <div className="nav_logo-icon" style={{ width: '28px', height: '28px' }}>
                 <svg
                   width="100%"
                   height="100%"
@@ -115,8 +192,9 @@ function App() {
               <div
                 data-brand-name="true"
                 className="paragraph_large margin-bottom_none"
+                style={{ fontWeight: 900, letterSpacing: '-0.02em', color: 'white' }}
               >
-                ChatBoost by Shinju AI
+                ChatBoost <span style={{ color: '#BB00FF', opacity: 0.8 }}>by Shinju AI</span>
               </div>
             </a>
           </div>
@@ -619,7 +697,7 @@ function App() {
           </div>
         </div>
       </div>
-      <header style={{minHeight: "80vh"}} className="section">
+      <header style={{minHeight: "80vh", paddingTop: "120px"}} className="section">
         <div className="container">
           <div className="w-layout-grid grid_2-col tablet-1-col-1-2 gap-xxlarge is-y-center">
             <div className="grid-item-manual">
@@ -1830,7 +1908,7 @@ function App() {
             className="content-block is-x-left margin-bottom_large w-node-a17d5ce7-8b58-2840-476b-f984f1586f7f-31ca503c"
           >
             <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({top: 0, behavior: "smooth"}); }} className="logo-link w-inline-block">
-              <div className="nav_logo-icon">
+              <div className="nav_logo-icon" style={{ width: '28px', height: '28px' }}>
                 <svg
                   width="100%"
                   height="100%"
@@ -1845,9 +1923,10 @@ function App() {
               </div>
               <div
                 data-brand-name="true"
-                className="paragraph_xlarge margin-bottom_none text_all-caps"
+                className="paragraph_xlarge margin-bottom_none"
+                style={{ fontWeight: 900, letterSpacing: '-0.02em', color: 'white' }}
               >
-                ChatBoost by Shinju AI
+                ChatBoost <span style={{ color: '#BB00FF', opacity: 0.8 }}>by Shinju AI</span>
               </div>
             </a>
           </nav>
@@ -2112,19 +2191,19 @@ function App() {
           <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '16px', maxWidth: '500px', width: '90%', color: '#1a1a1a', textAlign: 'left' }} onClick={(e) => e.stopPropagation()}>
             {onboardingStep === 0 ? (
                 <>
-                    <h2 className="heading_primary" style={{ color: '#1a1a1a', marginBottom: '10px' }}>Get Started</h2>
-                    <p className="paragraph_small">Tell us about your business to begin your 14-day free trial.</p>
-                    <form onSubmit={handleFormSubmit} style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                    <input className="input_field w-input" placeholder="Business Name" required />
-                    <input className="input_field w-input" type="email" placeholder="Work Email" required />
-                    <select className="input_field w-input" style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '4px' }}>
+                    <h2 className="heading_primary_modal" style={{ color: '#1a1a1a', marginBottom: '16px' }}>Get Started</h2>
+                    <p className="paragraph_small" style={{ color: '#666', marginBottom: '24px' }}>Tell us about your business to begin your 14-day free trial.</p>
+                    <form onSubmit={handleFormSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <input className="modal_input" placeholder="Business Name" required />
+                    <input className="modal_input" type="email" placeholder="Work Email" required />
+                    <select className="modal_input" style={{ cursor: 'pointer' }}>
                         <option>Restaurant</option>
                         <option>Salon / Spa</option>
                         <option>Retail</option>
                         <option>Other</option>
                     </select>
-                    <button className="button on-accent-primary" type="submit" style={{ border: 'none', padding: '15px', borderRadius: '8px', cursor: 'pointer' }}>Create My Bot</button>
-                    <button className="button is-secondary" type="button" onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666' }}>Cancel</button>
+                    <button className="button on-accent-primary" type="submit" style={{ border: 'none', padding: '16px', borderRadius: '12px', cursor: 'pointer', marginTop: '10px' }}>Create My Bot</button>
+                    <button className="button is-secondary" type="button" onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666', fontSize: '13px' }}>Cancel</button>
                     </form>
                 </>
             ) : (
@@ -2173,44 +2252,48 @@ function App() {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="heading_small" style={{ color: "#1a1a1a", marginBottom: "16px" }}>Success!</h3>
-            <p className="paragraph_small" style={{ color: "#4a4a4a", marginBottom: "24px" }}>{modalContent}</p>
-            <button className="button on-accent-primary" onClick={() => setIsModalOpen(false)} style={{ border: 'none', padding: '12px 24px', borderRadius: '8px', cursor: 'pointer' }}>Awesome</button>
+            <h3 className="heading_primary_modal" style={{ color: "#1a1a1a", marginBottom: "16px" }}>Success!</h3>
+            <p className="paragraph_small" style={{ color: "#666", marginBottom: "32px", lineHeight: '1.5' }}>{modalContent}</p>
+            <button className="button on-accent-primary" onClick={() => setIsModalOpen(false)} style={{ border: 'none', padding: '16px 32px', borderRadius: '12px', cursor: 'pointer', width: '100%', fontSize: '15px' }}>Awesome</button>
           </div>
         </div>
       )}
 
       {isDemoOpen && (
         <div style={{
-          position: 'fixed', bottom: '20px', right: '20px', width: '350px', height: '500px', 
-          backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+          position: 'fixed', bottom: '20px', right: '20px', width: '380px', height: '550px', 
+          backgroundColor: 'white', borderRadius: '20px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
           display: 'flex', flexDirection: 'column', zIndex: 10000, overflow: 'hidden',
-          border: '1px solid #ddd'
+          border: '1px solid rgba(0,0,0,0.05)'
         }}>
-          <div style={{ backgroundColor: '#7b4397', color: 'white', padding: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <strong>ChatBoost by Shinju AI Live Demo</strong>
-            <span style={{ cursor: 'pointer', fontSize: '20px' }} onClick={() => setIsDemoOpen(false)}>✕</span>
+          <div style={{ backgroundColor: '#BB00FF', color: 'white', padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '10px', height: '10px', background: '#00ff88', borderRadius: '50%', boxShadow: '0 0 10px #00ff88' }}></div>
+                <strong style={{ fontSize: '13px', letterSpacing: '0.1em' }}>SHINJU AI LIVE DEMO</strong>
+            </div>
+            <span style={{ cursor: 'pointer', fontSize: '18px', opacity: 0.8 }} onClick={() => setIsDemoOpen(false)}>✕</span>
           </div>
-          <div style={{ flex: 1, padding: '15px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', background: '#fcfcfc' }}>
             {demoMessages.map((m, i) => (
               <div key={i} style={{ 
                 alignSelf: m.role === 'bot' ? 'flex-start' : 'flex-end',
-                backgroundColor: m.role === 'bot' ? '#f0f0f0' : '#7b4397',
-                color: m.role === 'bot' ? 'black' : 'white',
-                padding: '8px 12px', borderRadius: '8px', maxWidth: '80%',
-                fontSize: '14px', lineHeight: '1.4'
+                backgroundColor: m.role === 'bot' ? 'white' : '#BB00FF',
+                color: m.role === 'bot' ? '#1a1a1a' : 'white',
+                padding: '12px 18px', borderRadius: m.role === 'bot' ? '18px 18px 18px 4px' : '18px 18px 4px 18px', 
+                maxWidth: '85%', boxShadow: m.role === 'bot' ? '0 2px 8px rgba(0,0,0,0.04)' : '0 4px 12px rgba(187, 0, 255, 0.2)',
+                fontSize: '14px', lineHeight: '1.5'
               }}>
                 {m.text}
               </div>
             ))}
           </div>
-          <form onSubmit={sendDemoMessage} style={{ padding: '10px', borderTop: '1px solid #eee', display: 'flex' }}>
+          <form onSubmit={sendDemoMessage} style={{ padding: '15px', borderTop: '1px solid #eee', display: 'flex', background: 'white' }}>
             <input 
-              className="input_field w-input" 
-              placeholder="Type a message..." 
+              className="modal_input" 
+              placeholder="Ask anything..." 
               value={userInput} 
               onChange={(e) => setUserInput(e.target.value)}
-              style={{ flex: 1, marginBottom: 0, padding: '10px' }}
+              style={{ flex: 1, marginBottom: 0, padding: '12px 15px' }}
             />
           </form>
         </div>
