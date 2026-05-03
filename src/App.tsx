@@ -1475,8 +1475,8 @@ function App() {
           <div className="w-layout-grid grid_3-col gap-medium tablet-1-col-1">
             <div className="card-link height_100percent on-secondary" style={{ padding: '40px', borderRadius: '24px', border: '1px solid #eee', display: 'flex', flexDirection: 'column' }}>
               <div className="eyebrow">Starter</div>
-              <div className="heading_hero" style={{ fontSize: '3rem', margin: '10px 0 0 0' }}>$49<span style={{ fontSize: '1rem', color: '#888' }}>/mo maintenance</span></div>
-              <p style={{ color: '#888', fontSize: '0.85rem', marginBottom: '20px', fontWeight: 600 }}>+ $99 one-time setup fee</p>
+              <div className="heading_hero" style={{ fontSize: '3rem', margin: '10px 0 0 0' }}>$29<span style={{ fontSize: '1rem', color: '#888' }}>/mo maintenance</span></div>
+              <p style={{ color: '#888', fontSize: '0.85rem', marginBottom: '20px', fontWeight: 600 }}>+ $49 one-time setup fee</p>
               <ul style={{ listStyle: 'none', padding: 0, marginBottom: '40px', flex: 1 }}>
                 <li style={{ marginBottom: '15px' }}>✅ 1 AI Chatbot</li>
                 <li style={{ marginBottom: '15px' }}>✅ 500 Messages / mo</li>
@@ -1488,8 +1488,8 @@ function App() {
             <div className="card-link height_100percent on-accent-primary" style={{ padding: '40px', borderRadius: '24px', border: '2px solid #BB00FF', display: 'flex', flexDirection: 'column', position: 'relative', background: '#fff', boxShadow: '0 20px 40px rgba(187, 0, 255, 0.1)' }}>
               <div style={{ position: 'absolute', top: '-15px', right: '20px', background: '#BB00FF', color: 'white', padding: '5px 15px', borderRadius: '20px', fontSize: '12px', fontWeight: 900 }}>MOST POPULAR</div>
               <div className="eyebrow" style={{ color: '#BB00FF' }}>Professional</div>
-              <div className="heading_hero" style={{ fontSize: '3rem', margin: '10px 0 0 0' }}>$199<span style={{ fontSize: '1rem', color: '#888' }}>/mo maintenance</span></div>
-              <p style={{ color: '#888', fontSize: '0.85rem', marginBottom: '20px', fontWeight: 600 }}>+ $299 one-time setup fee</p>
+              <div className="heading_hero" style={{ fontSize: '3rem', margin: '10px 0 0 0' }}>$99<span style={{ fontSize: '1rem', color: '#888' }}>/mo maintenance</span></div>
+              <p style={{ color: '#888', fontSize: '0.85rem', marginBottom: '20px', fontWeight: 600 }}>+ $149 one-time setup fee</p>
               <ul style={{ listStyle: 'none', padding: 0, marginBottom: '40px', flex: 1 }}>
                 <li style={{ marginBottom: '15px' }}>✅ Advanced RAG (Knowledge Base)</li>
                 <li style={{ marginBottom: '15px' }}>✅ 5,000 Messages / mo</li>
@@ -1501,8 +1501,8 @@ function App() {
             </div>
             <div className="card-link height_100percent on-secondary" style={{ padding: '40px', borderRadius: '24px', border: '1px solid #eee', display: 'flex', flexDirection: 'column' }}>
               <div className="eyebrow">Enterprise</div>
-              <div className="heading_hero" style={{ fontSize: '3rem', margin: '10px 0 0 0' }}>$499<span style={{ fontSize: '1rem', color: '#888' }}>/mo maintenance</span></div>
-              <p style={{ color: '#888', fontSize: '0.85rem', marginBottom: '20px', fontWeight: 600 }}>+ $999 one-time setup fee</p>
+              <div className="heading_hero" style={{ fontSize: '3rem', margin: '10px 0 0 0' }}>$299<span style={{ fontSize: '1rem', color: '#888' }}>/mo maintenance</span></div>
+              <p style={{ color: '#888', fontSize: '0.85rem', marginBottom: '20px', fontWeight: 600 }}>+ $499 one-time setup fee</p>
               <ul style={{ listStyle: 'none', padding: 0, marginBottom: '40px', flex: 1 }}>
                 <li style={{ marginBottom: '15px' }}>✅ Unlimited Messages</li>
                 <li style={{ marginBottom: '15px' }}>✅ Custom Multi-Agent Flow</li>
@@ -2286,8 +2286,8 @@ function App() {
                     </select>
                     <select className="modal_input" name="plan" style={{ cursor: 'pointer' }}>
                         <option value="free">Free Trial (14 days)</option>
-                        <option value="starter">Starter Plan ($49/mo)</option>
-                        <option value="pro">Professional Plan ($199/mo)</option>
+                        <option value="starter">Starter Plan ($29/mo)</option>
+                        <option value="pro">Professional Plan ($99/mo)</option>
                     </select>
                     <button className="button on-accent-primary" type="submit" style={{ border: 'none', padding: '16px', borderRadius: '12px', cursor: 'pointer', marginTop: '10px' }}>Create My Bot</button>
                     <button className="button is-secondary" type="button" onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666', fontSize: '13px' }}>Cancel</button>
