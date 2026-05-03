@@ -130,13 +130,12 @@ function App() {
 
     setOnboardingStep(1);
     
-    // Simulate AI Onboarding
-    setTimeout(() => setOnboardingStep(2), 1500);
-    setTimeout(() => setOnboardingStep(3), 3000);
+    // Step 1: Industry Mapping (1.5s)
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setOnboardingStep(2);
 
+    // Step 2: AI Training & Backend Sync (1.5s)
     let dbUrl = '';
-
-    // Actual Backend Registration & Email Dispatch
     try {
         const API_BASE = import.meta.env.VITE_API_URL || 'https://keiz-chatbot-saas-1.onrender.com';
         const response = await fetch(`${API_BASE}/auth/signup`, {
@@ -145,22 +144,35 @@ function App() {
             body: JSON.stringify(signupData)
         });
 
-        if (!response.ok) throw new Error('Signup failed');
-        
-        const data = await response.json();
-        dbUrl = `/dashboard.html?api_key=${data.api_key}`;
-        console.log('INTEGRATION_SUCCESS: Lead registered and email dispatched via backend.');
-    } catch {
-        console.warn('INTEGRATION_NOTICE: Backend registration failed. Ensure the FastAPI server is running on port 8000.');
+        if (response.ok) {
+            const data = await response.json();
+            dbUrl = `/dashboard.html?api_key=${data.api_key}`;
+        }
+    } catch (err) {
+        console.error('Signup Error:', err);
     }
 
-    setTimeout(() => {
-        setIsModalOpen(false);
-        setOnboardingStep(0);
-        if (dbUrl) setDashboardUrl(dbUrl);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setOnboardingStep(3);
+
+    // Step 3: Deployment (1.5s)
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    setIsModalOpen(false);
+    setOnboardingStep(0);
+    
+    if (dbUrl) {
+        setDashboardUrl(dbUrl);
+        setModalContent(`Success! Your AI dashboard for ${businessName} is live. Redirecting you now...`);
+        setIsModalOpen(true);
+        // Automatic redirect after 2 seconds
+        setTimeout(() => {
+            window.location.href = dbUrl;
+        }, 2000);
+    } else {
         setModalContent(`Welcome ${userName}! Your AI dashboard for ${businessName} is being provisioned. Check your email (${userEmail}) for the confirmation.`);
         setIsModalOpen(true);
-    }, 4500);
+    }
   };
   return (
     <>
