@@ -544,9 +544,10 @@
                 
                 CURRENT_PLAN = (s.plan || "free").toLowerCase();
                 
-                document.getElementById("stat-active-chats").innerText = s.active_chats;
-                document.getElementById("stat-total-res").innerText = s.total_reservations;
-                document.getElementById("stat-needs-review").innerText = s.needs_review;
+                document.getElementById("stat-active-chats").innerText = s.active_chats || 0;
+                document.getElementById("stat-total-res").innerText = s.total_reservations || 0;
+                document.getElementById("stat-needs-review").innerText = s.needs_review || 0;
+                if (s.avg_confidence) document.getElementById("stat-avg-conf").innerText = s.avg_confidence + "%";
                 
                 // Super Admin Logic
                 try {
@@ -555,6 +556,7 @@
                         const config = await settingsRes.json();
                         const admin_email = "traore.m.2007@gmail.com";
                         IS_SUPER_ADMIN = config.email.toLowerCase() === admin_email.toLowerCase();
+                        document.getElementById("company-title").innerText = config.name || "Omni-Console";
                     }
                 } catch(e) {}
 
@@ -593,11 +595,22 @@
                     }
                 });
 
+                // Force layout update for Pro/Admin
+                if (!isGated) {
+                    document.getElementById('tab-knowledge').style.opacity = '1';
+                    document.getElementById('tab-knowledge').style.pointerEvents = 'auto';
+                }
+
                 // Update Billing Tab
                 const display = document.getElementById("current-plan-display");
                 const price = document.getElementById("current-plan-price");
                 if (display) display.innerText = CURRENT_PLAN.toUpperCase() + " TIER";
                 if (price) {
+                    const prices = { 'free': '€0/mo (Free Trial)', 'starter': '€29/mo (Standard)', 'pro': '€99/mo (Professional)', 'enterprise': '€299/mo (Custom SLA)' };
+                    price.innerText = `Billed Monthly: ${prices[CURRENT_PLAN] || '€99/mo'}`;
+                }
+            } catch(e) { console.error("Stats Fetch Error:", e); }
+        }
                     const prices = { 'free': '€0/mo (Free Trial)', 'starter': '€29/mo (Standard)', 'pro': '€99/mo (Professional)', 'enterprise': '€299/mo (Custom SLA)' };
                     price.innerText = `Billed Monthly: ${prices[CURRENT_PLAN] || '€99/mo'}`;
                 }
