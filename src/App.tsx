@@ -117,14 +117,12 @@ function App() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const businessName = formData.get('business_name') as string;
-    const userEmail = formData.get('user_email') as string;
-    const userName = formData.get('user_name') as string;
     const plan = formData.get('plan') as string;
 
     const signupData = {
         name: businessName,
         subdomain: businessName.toLowerCase().replace(/[^a-z0-9]/g, '') + Math.floor(100 + Math.random() * 900),
-        email: userEmail,
+        email: formData.get('user_email') as string,
         plan: plan
     };
 
