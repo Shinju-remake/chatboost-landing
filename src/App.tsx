@@ -2295,15 +2295,24 @@ function App() {
                     </form>
                 </>
             ) : (
-                <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                    <div style={{ width: '60px', height: '60px', border: '4px solid #f3f3f3', borderTop: '4px solid #BB00FF', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 20px' }}></div>
-                    <h3 className="heading_small" style={{ color: '#1a1a1a', marginBottom: '10px' }}>
-                        {onboardingStep === 1 && "Analyzing business niche..."}
-                        {onboardingStep === 2 && "Provisioning AI model..."}
-                        {onboardingStep === 3 && "Finalizing dashboard..."}
+                <div style={{ textAlign: 'center', padding: '30px 20px' }}>
+                    <div style={{ position: 'relative', width: '80px', height: '80px', margin: '0 auto 30px' }}>
+                        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: '4px solid rgba(187, 0, 255, 0.1)', borderRadius: '50%' }}></div>
+                        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: '4px solid transparent', borderTopColor: '#BB00FF', borderRadius: '50%', animation: 'spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite' }}></div>
+                        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '40px', height: '40px', background: 'radial-gradient(circle, rgba(187, 0, 255, 0.2) 0%, transparent 70%)', borderRadius: '50%', animation: 'pulse 2s infinite' }}></div>
+                    </div>
+                    <h3 style={{ color: '#1a1a1a', marginBottom: '12px', fontSize: '22px', fontWeight: '800', letterSpacing: '-0.02em' }}>
+                        {onboardingStep === 1 && "Mapping industry parameters..."}
+                        {onboardingStep === 2 && "Training your AI agent..."}
+                        {onboardingStep === 3 && "Deploying Omni-Console..."}
                     </h3>
-                    <div style={{ width: '100%', height: '8px', backgroundColor: '#eee', borderRadius: '4px', overflow: 'hidden', marginTop: '15px' }}>
-                        <div style={{ width: `${(onboardingStep / 3) * 100}%`, height: '100%', backgroundColor: '#BB00FF', transition: 'width 0.5s ease' }}></div>
+                    <p style={{ color: '#6b7280', fontSize: '15px', marginBottom: '24px' }}>
+                        {onboardingStep === 1 && "Analyzing optimal conversation flows for your business."}
+                        {onboardingStep === 2 && "Structuring RAG pathways and semantic memory."}
+                        {onboardingStep === 3 && "Securing endpoints and finalizing your dashboard."}
+                    </p>
+                    <div style={{ width: '100%', height: '6px', backgroundColor: '#f3f4f6', borderRadius: '100px', overflow: 'hidden' }}>
+                        <div style={{ width: `${(onboardingStep / 3) * 100}%`, height: '100%', backgroundColor: '#BB00FF', transition: 'width 0.6s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 0 10px rgba(187, 0, 255, 0.5)' }}></div>
                     </div>
                 </div>
             )}
@@ -2408,6 +2417,8 @@ function App() {
             )}
             <style>{`
                 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+                @keyframes spin { 100% { transform: rotate(360deg); } }
+                @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.5; } 50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; } 100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.5; } }
             `}</style>
           </div>
           <form onSubmit={sendDemoMessage} style={{ padding: '15px', borderTop: '1px solid #eee', display: 'flex', background: 'white' }}>
