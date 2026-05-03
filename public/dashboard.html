@@ -311,12 +311,12 @@
         <h2>CHATBOOST</h2>
         <p style="color: var(--text-muted); font-size:0.75rem; font-weight: 500;">OMNI-CONSOLE V3</p>
         <hr>
-        <div class="nav-item active" onclick="switchTab('analytics')">📊 Analytics</div>
-        <div class="nav-item" onclick="switchTab('reservations')">📅 Delivery & Orders</div>
-        <div class="nav-item" onclick="switchTab('rules')">🛠️ FAQ Rules</div>
-        <div class="nav-item" onclick="switchTab('knowledge')">🧠 Knowledge Base</div>
-        <div class="nav-item" onclick="switchTab('billing')">💳 Billing & Plans</div>
-        <div class="nav-item" onclick="switchTab('settings')">🎨 Theme & Branding</div>
+        <div id="nav-analytics" class="nav-item active" onclick="switchTab('analytics')">📊 Analytics</div>
+        <div id="nav-reservations" class="nav-item" onclick="switchTab('reservations')">📅 Delivery & Orders</div>
+        <div id="nav-rules" class="nav-item" onclick="switchTab('rules')">🛠️ FAQ Rules</div>
+        <div id="nav-knowledge" class="nav-item" onclick="switchTab('knowledge')">🧠 Knowledge Base</div>
+        <div id="nav-billing" class="nav-item" onclick="switchTab('billing')">💳 Billing & Plans</div>
+        <div id="nav-settings" class="nav-item" onclick="switchTab('settings')">🎨 Theme & Branding</div>
         <div class="nav-item" onclick="window.location.href='/'" style="margin-top:auto;">🚪 Logout</div>
     </div>
 
@@ -433,8 +433,8 @@
         <div id="tab-billing" class="tab-content">
             <div class="card" style="text-align:center; padding: 60px 24px;">
                 <p style="color:var(--text-muted); text-transform:uppercase; letter-spacing: 0.1em; font-size:0.8rem;">Active Subscription</p>
-                <h1 id="current-plan-display" style="color:var(--primary); font-size:4rem; margin:16px 0; font-weight:900; letter-spacing:-0.04em;">PRO TIER</h1>
-                <p style="color:var(--text-muted); margin-bottom:40px;">Billed Monthly: €199/mo (Enterprise SLA)</p>
+                <h1 id="current-plan-display" style="color:var(--primary); font-size:4rem; margin:16px 0; font-weight:900; letter-spacing:-0.04em;">LOADING...</h1>
+                <p id="current-plan-price" style="color:var(--text-muted); margin-bottom:40px;">Checking status...</p>
                 <button onclick="alert('Redirecting to Stripe...')" class="btn" style="padding:16px 48px; border-radius:14px;">Manage Billing & Invoices</button>
             </div>
         </div>
@@ -496,8 +496,24 @@
         }
         
         let API_KEY = localStorage.getItem("chatboost_admin_key");
+        let CURRENT_PLAN = "free";
+        let IS_SUPER_ADMIN = false;
+
+        function showUpgradeModal(tab) {
+            const names = { 'knowledge': 'Advanced Neural RAG', 'settings': 'Omnichannel Theme & Meta Integration' };
+            alert(`🔒 FEATURE LOCKED: ${names[tab]} is only available on Professional and Enterprise plans. Please upgrade in the Billing section.`);
+            switchTab('billing');
+        }
 
         async function switchTab(tab) {
+            // Plan Gating for Tabs
+            if (!IS_SUPER_ADMIN && (CURRENT_PLAN === 'free' || CURRENT_PLAN === 'starter')) {
+                if (tab === 'knowledge' || tab === 'settings') {
+                    showUpgradeModal(tab);
+                    return;
+                }
+            }
+
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.nav-item, .m-nav-item').forEach(i => i.classList.remove('active'));
             
@@ -524,20 +540,21 @@
             try {
                 const res = await fetch(`${API_BASE}/admin/stats`, { headers: {"X-API-Key": API_KEY} });
                 const s = await res.json();
+                
+                CURRENT_PLAN = (s.plan || "free").toLowerCase();
+                
                 document.getElementById("stat-active-chats").innerText = s.active_chats;
                 document.getElementById("stat-total-res").innerText = s.total_reservations;
                 document.getElementById("stat-needs-review").innerText = s.needs_review;
                 
                 // Super Admin Logic
                 const admin_email = "traore.m.2007@gmail.com";
-                // We'd ideally get current user email from API, but for now we check if plan is 'enterprise+' or similar if we wanted, 
-                // but let's assume we can fetch settings to check email
                 const settingsRes = await fetch(`${API_BASE}/admin/settings`, { headers: {"X-API-Key": API_KEY} });
                 const config = await settingsRes.json();
-                const isSuperAdmin = config.email.toLowerCase() === admin_email.toLowerCase();
+                IS_SUPER_ADMIN = config.email.toLowerCase() === admin_email.toLowerCase();
 
                 // Usage Bar Logic (Hide for Super Admin)
-                if (s.message_limit && !isSuperAdmin) {
+                if (s.message_limit && !IS_SUPER_ADMIN) {
                     document.getElementById('usage-container').style.display = 'block';
                     document.getElementById('usage-text').innerText = `${s.message_count}/${s.message_limit}`;
                     const pct = Math.min((s.message_count / s.message_limit) * 100, 100);
@@ -548,41 +565,42 @@
                 }
 
                 const badge = document.getElementById('plan-badge');
-                badge.innerText = isSuperAdmin ? "ROOT ADMIN" : `${s.plan.toUpperCase()} TIER`;
-                if (isSuperAdmin) badge.style.background = 'linear-gradient(90deg, #BB00FF, #00ff88)';
-                else if (s.plan === 'free') badge.style.background = '#666';
-                else if (s.plan === 'starter') badge.style.background = '#0070f3';
+                badge.innerText = IS_SUPER_ADMIN ? "ROOT ADMIN" : `${CURRENT_PLAN.toUpperCase()} TIER`;
                 
-                // Lock features visually (Bypass for Super Admin)
-                if (!isSuperAdmin && (s.plan === 'starter' || s.plan === 'free')) {
-                    const sf = document.getElementById('social-form');
-                    if (sf && !sf.innerHTML.includes("🔒")) {
-                        sf.style.opacity = '0.4';
-                        sf.style.pointerEvents = 'none';
-                        sf.innerHTML += '<div style="color:var(--primary); font-weight:700; margin-top:10px;">🔒 PRO FEATURE: Upgrade to unlock Meta API</div>';
-                    }
+                if (IS_SUPER_ADMIN) {
+                    badge.style.background = 'linear-gradient(90deg, #BB00FF, #00ff88)';
+                } else {
+                    const colors = { 'free': '#666', 'starter': '#0070f3', 'pro': '#BB00FF', 'enterprise': '#FFD700' };
+                    badge.style.background = colors[CURRENT_PLAN] || '#BB00FF';
+                    if (CURRENT_PLAN === 'enterprise') badge.style.color = '#000';
                 }
-            } catch(e) {}
+                
+                // Update Sidebar Icons for Locked Features
+                if (!IS_SUPER_ADMIN && (CURRENT_PLAN === 'free' || CURRENT_PLAN === 'starter')) {
+                    document.getElementById('nav-knowledge').innerHTML = '🧠 Knowledge Base 🔒';
+                    document.getElementById('nav-settings').innerHTML = '🎨 Theme & Branding 🔒';
+                    document.getElementById('nav-knowledge').style.opacity = '0.5';
+                    document.getElementById('nav-settings').style.opacity = '0.5';
+                }
+
+                // Update Billing Tab
+                document.getElementById("current-plan-display").innerText = CURRENT_PLAN.toUpperCase() + " TIER";
+                const prices = { 'free': '€0/mo (Free Trial)', 'starter': '€29/mo (Standard)', 'pro': '€99/mo (Professional)', 'enterprise': '€299/mo (Custom SLA)' };
+                document.getElementById("current-plan-price").innerText = `Billed Monthly: ${prices[CURRENT_PLAN] || '€99/mo'}`;
+            } catch(e) { console.error("Stats Fetch Error:", e); }
         }
 
         function checkPlanForBrain() {
-            fetch(`${API_BASE}/admin/settings`, { headers: {"X-API-Key": API_KEY} })
-                .then(r => r.json())
-                .then(config => {
-                    const admin_email = "traore.m.2007@gmail.com";
-                    const isSuperAdmin = config.email.toLowerCase() === admin_email.toLowerCase();
-                    
-                    if (!isSuperAdmin && (config.plan === 'free' || config.plan === 'starter')) {
-                        document.getElementById('tab-knowledge').innerHTML = `
-                            <div class="card" style="text-align:center; padding:100px 20px;">
-                                <h1 style="font-size:3rem; margin-bottom:20px;">🧠</h1>
-                                <h2 style="color:white;">Advanced RAG is Locked</h2>
-                                <p style="color:var(--text-muted); max-width:400px; margin:20px auto;">The Neural Knowledge Base (PDF Training) is only available on <strong>Professional</strong> and <strong>Enterprise</strong> plans.</p>
-                                <button class="btn" onclick="switchTab('billing')">Upgrade Now</button>
-                            </div>
-                        `;
-                    }
-                });
+            if (!IS_SUPER_ADMIN && (CURRENT_PLAN === 'free' || CURRENT_PLAN === 'starter')) {
+                document.getElementById('tab-knowledge').innerHTML = `
+                    <div class="card" style="text-align:center; padding:100px 20px;">
+                        <h1 style="font-size:3rem; margin-bottom:20px;">🧠</h1>
+                        <h2 style="color:white;">Advanced RAG is Locked</h2>
+                        <p style="color:var(--text-muted); max-width:400px; margin:20px auto;">The Neural Knowledge Base (PDF Training) is only available on <strong>Professional</strong> and <strong>Enterprise</strong> plans.</p>
+                        <button class="btn" onclick="switchTab('billing')">Upgrade Now</button>
+                    </div>
+                `;
+            }
         }
         async function fetchLogs() {
             try {
@@ -757,6 +775,7 @@
                 return;
             }
 
+            await fetchStats();
             switchTab('analytics');
         };
     </script>
