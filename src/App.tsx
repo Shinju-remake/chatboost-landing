@@ -2288,6 +2288,7 @@ function App() {
                         <option value="free">Free Trial (14 days)</option>
                         <option value="starter">Starter Plan ($29/mo)</option>
                         <option value="pro">Professional Plan ($99/mo)</option>
+                        <option value="enterprise">Enterprise Plan ($299/mo)</option>
                     </select>
                     <button className="button on-accent-primary" type="submit" style={{ border: 'none', padding: '16px', borderRadius: '12px', cursor: 'pointer', marginTop: '10px' }}>Create My Bot</button>
                     <button className="button is-secondary" type="button" onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666', fontSize: '13px' }}>Cancel</button>
