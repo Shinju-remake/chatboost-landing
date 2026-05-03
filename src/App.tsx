@@ -45,18 +45,18 @@ function App() {
       let response = "That's a great question! ChatBoost by Shinju AI is designed to handle exactly that. Would you like to see our pricing or try a free trial?";
       const lowerInput = input.toLowerCase();
 
-      if (lowerInput.includes('hello') || lowerInput.includes('hi') || lowerInput.includes('hey')) {
+      if (/\b(hello|hi|hey)\b/.test(lowerInput)) {
         response = "Hello! I'm here to show you how Shinju AI can transform your customer engagement. Select one of the options below to see me in action!";
-      } else if (lowerInput.includes('price') || lowerInput.includes('cost') || lowerInput.includes('plan')) {
+      } else if (lowerInput.includes('pric') || lowerInput.includes('cost') || lowerInput.includes('plan')) {
         response = "Our plans start at $49/mo for small businesses. Our Professional plan ($199/mo) includes advanced RAG (Knowledge Base) and WhatsApp integration. Which one fits your needs?";
-      } else if (lowerInput.includes('work') || lowerInput.includes('how')) {
+      } else if (lowerInput.includes('start')) {
+        response = "Ready to boost your sales? Click the 'Get Started' button on the page to begin your 14-day free trial. I can have your first bot ready in minutes!";
+      } else if (lowerInput.includes('work') || /\bhow\b/.test(lowerInput)) {
         response = "It's a simple 3-step process: 1. Connect your business data, 2. Customize the AI's tone, and 3. Deploy to your site or social media. We handle the technical setup!";
       } else if (lowerInput.includes('restaurant') || lowerInput.includes('food') || lowerInput.includes('order')) {
         response = "For restaurants like Shinju Bistro, I act as an AI Waiter—taking orders, handling bookings, and up-selling sides automatically. Order volume usually jumps by 300%!";
       } else if (lowerInput.includes('real estate') || lowerInput.includes('lead')) {
         response = "In real estate, I qualify leads 24/7 by asking about budget and location. This ensures your agents only spend time on high-intent buyers.";
-      } else if (lowerInput.includes('start')) {
-        response = "Ready to boost your sales? Click the 'Get Started' button on the page to begin your 14-day free trial. I can have your first bot ready in minutes!";
       }
 
       setDemoMessages([...newMessages, { role: 'bot', text: response }]);
