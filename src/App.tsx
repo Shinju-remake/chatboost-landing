@@ -16,7 +16,7 @@ function App() {
 
   const [isDemoOpen, setIsDemoOpen] = useState(false);
   const [demoMessages, setDemoMessages] = useState([
-    { role: 'bot', text: 'Hi! I am the ChatBoost AI. How can I help your business today?' }
+    { role: 'bot', text: 'Hi! I am the ChatBoost by Shinju AI. How can I help your business today?' }
   ]);
   const [userInput, setUserInput] = useState('');
 
@@ -27,7 +27,7 @@ function App() {
     setDemoMessages(newMessages);
     setUserInput('');
     setTimeout(() => {
-      setDemoMessages([...newMessages, { role: 'bot', text: 'That sounds interesting! ChatBoost can automate exactly that for you. Would you like to see our pricing?' }]);
+      setDemoMessages([...newMessages, { role: 'bot', text: 'That sounds interesting! ChatBoost by Shinju AI can automate exactly that for you. Would you like to see our pricing?' }]);
     }, 1000);
   };
 
@@ -42,19 +42,47 @@ function App() {
     e.preventDefault();
     const target = e.currentTarget as HTMLElement;
     const label = (target.innerText || content).trim();
-    if (label === 'Get started' || label === 'Get your chatbot') {
+    
+    if (label === 'Get started' || label === 'Get your chatbot' || label === 'Try for free') {
         setModalContent('ONBOARDING');
         setIsModalOpen(true);
         return;
     }
+    
+    if (label === 'Demo' || label === 'See demo') {
+        setIsDemoOpen(true);
+        return;
+    }
+
+    if (label === 'Pricing') {
+        const el = document.getElementById('pricing');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+
+    if (label === 'How it works') {
+        const el = document.getElementById('how-it-works');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+
     setModalContent("Information about " + label + " will be available soon!");
     setIsModalOpen(true);
   };
 
+  const [onboardingStep, setOnboardingStep] = useState(0);
+
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setModalContent('Thanks for subscribing! We will be in touch soon.');
-    setIsModalOpen(true);
+    setOnboardingStep(1);
+    setTimeout(() => setOnboardingStep(2), 1500);
+    setTimeout(() => setOnboardingStep(3), 3000);
+    setTimeout(() => {
+        setIsModalOpen(false);
+        setOnboardingStep(0);
+        setModalContent('Welcome to ChatBoost by Shinju AI! Your AI dashboard is being provisioned. We have sent your credentials to your email.');
+        setIsModalOpen(true);
+    }, 4500);
   };
   return (
     <>
@@ -88,7 +116,7 @@ function App() {
                 data-brand-name="true"
                 className="paragraph_large margin-bottom_none"
               >
-                ChatBoost
+                ChatBoost by Shinju AI
               </div>
             </a>
           </div>
@@ -124,7 +152,7 @@ function App() {
                                 >
                                   <li>
                                     <a
-                                      href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                                      href="#features" onClick={(e) => handleLinkClick(e, "Features")} 
                                       className="mega-nav_link-item w-inline-block"
                                     >
                                       <div className="nav_icon is-medium">
@@ -159,7 +187,7 @@ function App() {
                                   </li>
                                   <li>
                                     <a
-                                      href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                                      href="#features" onClick={(e) => handleLinkClick(e, "Features")} 
                                       className="mega-nav_link-item w-inline-block"
                                     >
                                       <div className="nav_icon is-medium">
@@ -193,7 +221,7 @@ function App() {
                                   </li>
                                   <li>
                                     <a
-                                      href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                                      href="#features" onClick={(e) => handleLinkClick(e, "Features")} 
                                       className="mega-nav_link-item w-inline-block"
                                     >
                                       <div className="nav_icon is-medium">
@@ -235,7 +263,7 @@ function App() {
                                 >
                                   <li>
                                     <a
-                                      href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                                      href="#features" onClick={(e) => handleLinkClick(e, "Features")} 
                                       className="mega-nav_link-item w-inline-block"
                                     >
                                       <div className="nav_icon is-medium">
@@ -270,7 +298,7 @@ function App() {
                                   </li>
                                   <li>
                                     <a
-                                      href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                                      href="#features" onClick={(e) => handleLinkClick(e, "Features")} 
                                       className="mega-nav_link-item w-inline-block"
                                     >
                                       <div className="nav_icon is-medium">
@@ -305,7 +333,7 @@ function App() {
                                   </li>
                                   <li>
                                     <a
-                                      href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                                      href="#features" onClick={(e) => handleLinkClick(e, "Features")} 
                                       className="mega-nav_link-item w-inline-block"
                                     >
                                       <div className="nav_icon is-medium">
@@ -347,7 +375,7 @@ function App() {
                                 >
                                   <li>
                                     <a
-                                      href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                                      href="#how-it-works" onClick={(e) => handleLinkClick(e, "How it works")} 
                                       className="mega-nav_link-item w-inline-block"
                                     >
                                       <div className="nav_icon is-medium">
@@ -381,7 +409,7 @@ function App() {
                                   </li>
                                   <li>
                                     <a
-                                      href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                                      href="#pricing" onClick={(e) => handleLinkClick(e, "Pricing")} 
                                       className="mega-nav_link-item w-inline-block"
                                     >
                                       <div className="nav_icon is-medium">
@@ -415,7 +443,7 @@ function App() {
                                   </li>
                                   <li>
                                     <a
-                                      href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                                      href="#" onClick={(e) => handleLinkClick(e, "Demo")} 
                                       className="mega-nav_link-item w-inline-block"
                                     >
                                       <div className="nav_icon is-medium">
@@ -456,7 +484,7 @@ function App() {
                             className="grid-item-manual w-node-a17d5ce7-8b58-2840-476b-f984f1586f4a-31ca503b"
                           >
                             <a
-                              href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                              href="#" onClick={(e) => handleLinkClick(e, "See demo")} 
                               className="card-link is-inverse on-accent-primary w-inline-block"
                             >
                               <div className="card_body">
@@ -500,7 +528,7 @@ function App() {
                 </li>
                 <li className="nav_menu-list-item">
                   <a
-                    href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                    href="#" onClick={(e) => handleLinkClick(e, "Link")} 
                     className="nav_link on-accent-primary w-inline-block"
                   >
                     <div>About</div>
@@ -508,7 +536,7 @@ function App() {
                 </li>
                 <li className="nav_menu-list-item">
                   <a
-                    href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                    href="#" onClick={(e) => handleLinkClick(e, "Link")} 
                     className="nav_link on-accent-primary w-inline-block"
                   >
                     <div>Blog</div>
@@ -532,7 +560,7 @@ function App() {
                         >
                           <li className="margin-bottom_none">
                             <a
-                              href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                              href="#" onClick={(e) => handleLinkClick(e, "Link")} 
                               className="nav_dropdown-link w-inline-block"
                             >
                               <div className="button_label">Help center</div>
@@ -540,7 +568,7 @@ function App() {
                           </li>
                           <li className="margin-bottom_none">
                             <a
-                              href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                              href="#" onClick={(e) => handleLinkClick(e, "Link")} 
                               className="nav_dropdown-link w-inline-block"
                             >
                               <div className="button_label">Contact</div>
@@ -607,7 +635,7 @@ function App() {
               </div>
             </div>
             <div className="header margin-bottom_none">
-              <h1 className="heading_hero">24/7 sales, powered by AI</h1>
+              <h1 className="heading_hero">24/7 sales, powered by Shinju AI</h1>
               <div className="subheading rich-text w-richtext">
                 <p>
                   Custom chatbots that answer customers, take orders, and boost
@@ -794,6 +822,31 @@ function App() {
           </div>
         </div>
       </section>
+      <section id="how-it-works" style={{minHeight: "80vh"}} className="section">
+        <div className="container">
+          <div className="header is-align-center">
+            <p className="eyebrow">Seamless integration</p>
+            <h2 className="heading_primary">How it works</h2>
+          </div>
+          <div className="w-layout-grid grid_3-col gap-large tablet-1-col-1">
+            <div className="content-block" style={{ textAlign: 'center' }}>
+              <div style={{ width: '80px', height: '80px', background: 'rgba(187, 0, 255, 0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '32px', fontWeight: 900, color: '#BB00FF' }}>1</div>
+              <h3 className="heading_small">Connect your data</h3>
+              <p className="paragraph_small">Upload your menu, FAQ, or documentation. Our AI indexes your business logic in seconds.</p>
+            </div>
+            <div className="content-block" style={{ textAlign: 'center' }}>
+              <div style={{ width: '80px', height: '80px', background: 'rgba(187, 0, 255, 0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '32px', fontWeight: 900, color: '#BB00FF' }}>2</div>
+              <h3 className="heading_small">Customize the brain</h3>
+              <p className="paragraph_small">Set your tone of voice and specific rules. Your chatbot becomes an extension of your team.</p>
+            </div>
+            <div className="content-block" style={{ textAlign: 'center' }}>
+              <div style={{ width: '80px', height: '80px', background: 'rgba(187, 0, 255, 0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '32px', fontWeight: 900, color: '#BB00FF' }}>3</div>
+              <h3 className="heading_small">Go live everywhere</h3>
+              <p className="paragraph_small">Embed the widget on your site or link it to WhatsApp and Instagram. Start boosting sales instantly.</p>
+            </div>
+          </div>
+        </div>
+      </section>
       <section id="features" style={{minHeight: "80vh"}} className="section is-secondary">
         <div className="container">
           <div className="w-layout-grid header is-2-col">
@@ -841,7 +894,7 @@ function App() {
                 <div className="w-layout-grid grid_3-col gap-xsmall">
                   <div className="ix-link-wrapper">
                     <a
-                      href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                      href="#" onClick={(e) => handleLinkClick(e, "Link")} 
                       className="card-link height_100percent on-secondary w-inline-block"
                     >
                       <div className="card_body">
@@ -901,7 +954,7 @@ function App() {
                   </div>
                   <div className="ix-link-wrapper">
                     <a
-                      href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                      href="#" onClick={(e) => handleLinkClick(e, "Link")} 
                       className="card-link height_100percent on-secondary w-inline-block"
                     >
                       <div className="card_body">
@@ -960,7 +1013,7 @@ function App() {
                   </div>
                   <div className="ix-link-wrapper">
                     <a
-                      href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                      href="#" onClick={(e) => handleLinkClick(e, "Link")} 
                       className="card-link height_100percent on-secondary w-inline-block"
                     >
                       <div className="card_body">
@@ -1028,7 +1081,7 @@ function App() {
                 <div className="w-layout-grid grid_3-col gap-xsmall">
                   <div className="ix-link-wrapper">
                     <a
-                      href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                      href="#" onClick={(e) => handleLinkClick(e, "Link")} 
                       className="card-link height_100percent on-secondary w-inline-block"
                     >
                       <div className="card_body">
@@ -1088,7 +1141,7 @@ function App() {
                   </div>
                   <div className="ix-link-wrapper">
                     <a
-                      href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                      href="#" onClick={(e) => handleLinkClick(e, "Link")} 
                       className="card-link height_100percent on-secondary w-inline-block"
                     >
                       <div className="card_body">
@@ -1147,7 +1200,7 @@ function App() {
                   </div>
                   <div className="ix-link-wrapper">
                     <a
-                      href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                      href="#" onClick={(e) => handleLinkClick(e, "Link")} 
                       className="card-link height_100percent on-secondary w-inline-block"
                     >
                       <div className="card_body">
@@ -1257,6 +1310,52 @@ function App() {
           </div>
         </div>
       </section>
+      <section id="pricing" style={{minHeight: "80vh"}} className="section">
+        <div className="container">
+          <div className="header is-align-center">
+            <p className="eyebrow">Flexible plans for every business</p>
+            <h2 className="heading_primary">Pricing that scales with you</h2>
+          </div>
+          <div className="w-layout-grid grid_3-col gap-medium tablet-1-col-1">
+            <div className="card-link height_100percent on-secondary" style={{ padding: '40px', borderRadius: '24px', border: '1px solid #eee', display: 'flex', flexDirection: 'column' }}>
+              <div className="eyebrow">Starter</div>
+              <div className="heading_hero" style={{ fontSize: '3rem', margin: '20px 0' }}>$49<span style={{ fontSize: '1rem', color: '#888' }}>/mo</span></div>
+              <ul style={{ listStyle: 'none', padding: 0, marginBottom: '40px', flex: 1 }}>
+                <li style={{ marginBottom: '15px' }}>✅ 1 AI Chatbot</li>
+                <li style={{ marginBottom: '15px' }}>✅ 500 Messages / mo</li>
+                <li style={{ marginBottom: '15px' }}>✅ Standard FAQ Logic</li>
+                <li style={{ marginBottom: '15px' }}>✅ Web Widget Integration</li>
+              </ul>
+              <button onClick={() => { setModalContent('ONBOARDING'); setIsModalOpen(true); }} className="button w-button" style={{ width: '100%' }}>Get Started</button>
+            </div>
+            <div className="card-link height_100percent on-accent-primary" style={{ padding: '40px', borderRadius: '24px', border: '2px solid #BB00FF', display: 'flex', flexDirection: 'column', position: 'relative', background: '#fff', boxShadow: '0 20px 40px rgba(187, 0, 255, 0.1)' }}>
+              <div style={{ position: 'absolute', top: '-15px', right: '20px', background: '#BB00FF', color: 'white', padding: '5px 15px', borderRadius: '20px', fontSize: '12px', fontWeight: 900 }}>MOST POPULAR</div>
+              <div className="eyebrow" style={{ color: '#BB00FF' }}>Professional</div>
+              <div className="heading_hero" style={{ fontSize: '3rem', margin: '20px 0' }}>$199<span style={{ fontSize: '1rem', color: '#888' }}>/mo</span></div>
+              <ul style={{ listStyle: 'none', padding: 0, marginBottom: '40px', flex: 1 }}>
+                <li style={{ marginBottom: '15px' }}>✅ Advanced RAG (Knowledge Base)</li>
+                <li style={{ marginBottom: '15px' }}>✅ 5,000 Messages / mo</li>
+                <li style={{ marginBottom: '15px' }}>✅ WhatsApp & Instagram</li>
+                <li style={{ marginBottom: '15px' }}>✅ Lead Generation Dashboard</li>
+                <li style={{ marginBottom: '15px' }}>✅ Priority Email Support</li>
+              </ul>
+              <button onClick={() => { setModalContent('ONBOARDING'); setIsModalOpen(true); }} className="button on-accent-primary w-button" style={{ width: '100%' }}>Get Started</button>
+            </div>
+            <div className="card-link height_100percent on-secondary" style={{ padding: '40px', borderRadius: '24px', border: '1px solid #eee', display: 'flex', flexDirection: 'column' }}>
+              <div className="eyebrow">Enterprise</div>
+              <div className="heading_hero" style={{ fontSize: '3rem', margin: '20px 0' }}>$499<span style={{ fontSize: '1rem', color: '#888' }}>/mo</span></div>
+              <ul style={{ listStyle: 'none', padding: 0, marginBottom: '40px', flex: 1 }}>
+                <li style={{ marginBottom: '15px' }}>✅ Unlimited Messages</li>
+                <li style={{ marginBottom: '15px' }}>✅ Custom Multi-Agent Flow</li>
+                <li style={{ marginBottom: '15px' }}>✅ White-Label Client Portal</li>
+                <li style={{ marginBottom: '15px' }}>✅ dedicated Account Manager</li>
+                <li style={{ marginBottom: '15px' }}>✅ SLA & Support Guarantee</li>
+              </ul>
+              <button onClick={() => { setModalContent('ONBOARDING'); setIsModalOpen(true); }} className="button w-button" style={{ width: '100%' }}>Contact Sales</button>
+            </div>
+          </div>
+        </div>
+      </section>
       <section id="stories" style={{minHeight: "80vh"}} className="section is-secondary">
         <div className="container">
           <div className="header is-align-center">
@@ -1266,35 +1365,47 @@ function App() {
             </h2>
           </div>
           <div className="w-layout-grid grid_3-col gap-small">
-            <div className="image-ratio_1x1">
+            <div className="image-ratio_1x1" style={{ position: 'relative' }}>
               <img
                 width="1216"
                 height="832"
-                alt="[interface] image of a laptop with software interface (for an ai marketing tech company)"
+                alt="Shinju Bistro success story"
                 src="https://cdn.prod.website-files.com/69f542c83da0ffb64c46e220/69f5cd0aed89556a1f6ff311_ba0ffe8d-8c5e-4afc-8438-436c86e29e22.avif"
                 loading="lazy"
                 className="image_cover"
               />
+              <div style={{ position: 'absolute', bottom: '20px', left: '20px', right: '20px', background: 'rgba(0,0,0,0.8)', padding: '15px', borderRadius: '12px' }}>
+                <div style={{ color: '#BB00FF', fontWeight: 900, fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '5px' }}>Shinju Bistro</div>
+                <div style={{ color: 'white', fontSize: '14px', fontWeight: 700 }}>300% Increase in order volume via AI Waiter.</div>
+              </div>
             </div>
-            <div className="image-ratio_1x1">
+            <div className="image-ratio_1x1" style={{ position: 'relative' }}>
               <img
                 width="1216"
                 height="832"
-                alt="image of outdoor dining experience (for a food truck)"
+                alt="Féau Real Estate chatbot"
                 src="https://cdn.prod.website-files.com/69f542c83da0ffb64c46e220/69f5cd0aed89556a1f6ff34c_693dac7d-d942-4bbd-8839-d9545c0d6b43.avif"
                 loading="lazy"
                 className="image_cover"
               />
+              <div style={{ position: 'absolute', bottom: '20px', left: '20px', right: '20px', background: 'rgba(0,0,0,0.8)', padding: '15px', borderRadius: '12px' }}>
+                <div style={{ color: '#00ff88', fontWeight: 900, fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '5px' }}>Féau Immobilier</div>
+                <div style={{ color: 'white', fontSize: '14px', fontWeight: 700 }}>24/7 lead qualification for luxury properties.</div>
+              </div>
             </div>
-            <div className="image-ratio_1x1">
+            <div className="image-ratio_1x1" style={{ position: 'relative' }}>
               <img
                 width="1216"
                 height="832"
-                alt="image of student engaging with ai tools"
+                alt="AI Tutor success"
                 src="https://cdn.prod.website-files.com/69f542c83da0ffb64c46e220/69f5cd0aed89556a1f6ff32f_2bc1e01d-d4eb-4d05-a2d4-6d37bc4c2620.avif"
                 loading="lazy"
                 className="image_cover"
               />
+              <div style={{ position: 'absolute', bottom: '20px', left: '20px', right: '20px', background: 'rgba(0,0,0,0.8)', padding: '15px', borderRadius: '12px' }}>
+                <div style={{ color: '#3b82f6', fontWeight: 900, fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '5px' }}>Global Academy</div>
+                <div style={{ color: 'white', fontSize: '14px', fontWeight: 700 }}>Instant answers for 10,000+ students daily.</div>
+              </div>
             </div>
           </div>
         </div>
@@ -1385,7 +1496,7 @@ function App() {
                   className="ix-link-wrapper w-node-cb4dba44-4d1a-628d-42f9-3215b3dc81fb-4c46e22b"
                 >
                   <a
-                    href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                    href="#" onClick={(e) => handleLinkClick(e, "Link")} 
                     className="content-block-link gap-xsmall w-inline-block"
                   >
                     <div className="image-ratio_3x4">
@@ -1399,8 +1510,8 @@ function App() {
                       />
                     </div>
                     <div className="content-block">
-                      <div className="heading_xsmall">Riley Chen</div>
-                      <div className="author_info">AI Implementation Lead</div>
+                      <div className="heading_xsmall">Mohamed Traore</div>
+                      <div className="author_info">Founder & Lead Architect</div>
                     </div>
                   </a>
                 </div>
@@ -1409,22 +1520,22 @@ function App() {
                   className="ix-link-wrapper w-node-cb4dba44-4d1a-628d-42f9-3215b3dc8204-4c46e22b"
                 >
                   <a
-                    href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                    href="#" onClick={(e) => handleLinkClick(e, "Link")} 
                     className="content-block-link gap-xsmall w-inline-block"
                   >
                     <div className="image-ratio_3x4">
                       <img
                         width="1216"
                         height="832"
-                        alt="image of a brainstorming session (for a consulting firm)"
+                        alt="AI Support Lead"
                         src="https://cdn.prod.website-files.com/69f542c83da0ffb64c46e220/69f5cd0aed89556a1f6ff33e_f5407dcb-a4f9-4084-9a58-678053876edd.avif"
                         loading="lazy"
                         className="image_cover position_relative"
                       />
                     </div>
                     <div className="content-block">
-                      <div className="heading_xsmall">Casey Morgan</div>
-                      <div className="author_info">Client Success Partner</div>
+                      <div className="heading_xsmall">Keiz V3</div>
+                      <div className="author_info">Omni-Engine Intelligence</div>
                     </div>
                   </a>
                 </div>
@@ -1433,7 +1544,7 @@ function App() {
                   className="ix-link-wrapper w-node-cb4dba44-4d1a-628d-42f9-3215b3dc820d-4c46e22b"
                 >
                   <a
-                    href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                    href="#" onClick={(e) => handleLinkClick(e, "Link")} 
                     className="content-block-link gap-xsmall w-inline-block"
                   >
                     <div className="image-ratio_3x4">
@@ -1457,7 +1568,7 @@ function App() {
                   className="ix-link-wrapper w-node-cb4dba44-4d1a-628d-42f9-3215b3dc8216-4c46e22b"
                 >
                   <a
-                    href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                    href="#" onClick={(e) => handleLinkClick(e, "Link")} 
                     className="content-block-link gap-xsmall w-inline-block"
                   >
                     <div className="image-ratio_3x4">
@@ -1736,7 +1847,7 @@ function App() {
                 data-brand-name="true"
                 className="paragraph_xlarge margin-bottom_none text_all-caps"
               >
-                ChatBoost
+                ChatBoost by Shinju AI
               </div>
             </a>
           </nav>
@@ -1748,27 +1859,27 @@ function App() {
                 </div>
               </li>
               <li className="list_item">
-                <a href="#results" className="footer_link w-inline-block">
+                <a href="#features" className="footer_link w-inline-block">
                   <div>Features</div>
                 </a>
               </li>
               <li className="list_item">
-                <a href="#results" className="footer_link w-inline-block">
+                <a href="#pricing" className="footer_link w-inline-block">
                   <div>Pricing</div>
                 </a>
               </li>
               <li className="list_item">
-                <a href="#results" className="footer_link w-inline-block">
+                <a href="#" onClick={(e) => handleLinkClick(e, "Demo")} className="footer_link w-inline-block">
                   <div>Demo</div>
                 </a>
               </li>
               <li className="list_item">
-                <a href="#results" className="footer_link w-inline-block">
+                <a href="#contact" className="footer_link w-inline-block">
                   <div>Support</div>
                 </a>
               </li>
               <li className="list_item">
-                <a href="#results" className="footer_link w-inline-block">
+                <a href="#contact" className="footer_link w-inline-block">
                   <div>Contact</div>
                 </a>
               </li>
@@ -1885,7 +1996,7 @@ function App() {
                       <p className="paragraph_small margin-top_xsmall">
                         View our{" "}
                         <a
-                          href="#" onClick={(e) => handleLinkClick(e, "Action triggered")} 
+                          href="#" onClick={(e) => handleLinkClick(e, "Link")} 
                           className="text-link is-secondary text-span_padding"
                         >
                           privacy policy
@@ -1908,7 +2019,7 @@ function App() {
           <nav className="footer_bottom">
             <div className="flex_horizontal is-y-baseline gap-small ix-link-wrapper">
               <div className="text-color_secondary">
-                © 2025 ChatBoost. All rights reserved.
+                © 2026 ChatBoost by Shinju AI. All rights reserved.
               </div>
               <a href="#results" className="footer_link">
                 Privacy
@@ -1997,22 +2108,38 @@ function App() {
           position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', 
           backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', 
           justifyContent: 'center', zIndex: 11000
-        }} onClick={() => setIsModalOpen(false)}>
+        }} onClick={() => onboardingStep === 0 && setIsModalOpen(false)}>
           <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '16px', maxWidth: '500px', width: '90%', color: '#1a1a1a', textAlign: 'left' }} onClick={(e) => e.stopPropagation()}>
-            <h2 className="heading_primary" style={{ color: '#1a1a1a', marginBottom: '10px' }}>Get Started</h2>
-            <p className="paragraph_small">Tell us about your business to begin your 14-day free trial.</p>
-            <form onSubmit={handleFormSubmit} style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              <input className="input_field w-input" placeholder="Business Name" required />
-              <input className="input_field w-input" type="email" placeholder="Work Email" required />
-              <select className="input_field w-input" style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '4px' }}>
-                <option>Restaurant</option>
-                <option>Salon / Spa</option>
-                <option>Retail</option>
-                <option>Other</option>
-              </select>
-              <button className="button on-accent-primary" type="submit" style={{ border: 'none', padding: '15px', borderRadius: '8px', cursor: 'pointer' }}>Create My Bot</button>
-              <button className="button is-secondary" type="button" onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666' }}>Cancel</button>
-            </form>
+            {onboardingStep === 0 ? (
+                <>
+                    <h2 className="heading_primary" style={{ color: '#1a1a1a', marginBottom: '10px' }}>Get Started</h2>
+                    <p className="paragraph_small">Tell us about your business to begin your 14-day free trial.</p>
+                    <form onSubmit={handleFormSubmit} style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                    <input className="input_field w-input" placeholder="Business Name" required />
+                    <input className="input_field w-input" type="email" placeholder="Work Email" required />
+                    <select className="input_field w-input" style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '4px' }}>
+                        <option>Restaurant</option>
+                        <option>Salon / Spa</option>
+                        <option>Retail</option>
+                        <option>Other</option>
+                    </select>
+                    <button className="button on-accent-primary" type="submit" style={{ border: 'none', padding: '15px', borderRadius: '8px', cursor: 'pointer' }}>Create My Bot</button>
+                    <button className="button is-secondary" type="button" onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666' }}>Cancel</button>
+                    </form>
+                </>
+            ) : (
+                <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                    <div style={{ width: '60px', height: '60px', border: '4px solid #f3f3f3', borderTop: '4px solid #BB00FF', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 20px' }}></div>
+                    <h3 className="heading_small" style={{ color: '#1a1a1a', marginBottom: '10px' }}>
+                        {onboardingStep === 1 && "Analyzing business niche..."}
+                        {onboardingStep === 2 && "Provisioning AI model..."}
+                        {onboardingStep === 3 && "Finalizing dashboard..."}
+                    </h3>
+                    <div style={{ width: '100%', height: '8px', backgroundColor: '#eee', borderRadius: '4px', overflow: 'hidden', marginTop: '15px' }}>
+                        <div style={{ width: `${(onboardingStep / 3) * 100}%`, height: '100%', backgroundColor: '#BB00FF', transition: 'width 0.5s ease' }}></div>
+                    </div>
+                </div>
+            )}
           </div>
         </div>
       )}
@@ -2061,7 +2188,7 @@ function App() {
           border: '1px solid #ddd'
         }}>
           <div style={{ backgroundColor: '#7b4397', color: 'white', padding: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <strong>ChatBoost Live Demo</strong>
+            <strong>ChatBoost by Shinju AI Live Demo</strong>
             <span style={{ cursor: 'pointer', fontSize: '20px' }} onClick={() => setIsDemoOpen(false)}>✕</span>
           </div>
           <div style={{ flex: 1, padding: '15px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
